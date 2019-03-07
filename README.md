@@ -27,4 +27,5 @@ After you have installed the library you can start by creating the 'Display'.
 ```java
 public static void main(String[] args) throws CloudInitializeException, CloudCreateException {
 	Display display = new Display(new VectorI(), "Demo", false, true);
-}```
+}
+```
