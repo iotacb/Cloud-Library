@@ -21,6 +21,7 @@ For IntelliJ-IDEA:
 
 # Getting started
 After you have installed the library you can start by creating the 'Display'.
-```public static void main(String[] args) throws CloudInitializeException, CloudCreateException {
-Display display = new Display(new VectorI(), "Demo", false, true);
-}```
+```java
+public static void main(String[] args) throws CloudInitializeException, CloudCreateException {
+	Display display = new Display(new VectorI(), "Demo", false, true);
+}
