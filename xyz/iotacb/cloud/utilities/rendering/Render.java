@@ -25,26 +25,27 @@ import static org.lwjgl.opengl.GL11.glVertex2d;
 import java.awt.Color;
 
 import xyz.iotacb.cloud.utilities.math.vector.VectorD;
+import xyz.iotacb.cloud.utilities.math.vector.VectorF;
 import xyz.iotacb.cloud.utilities.math.vector.VectorI;
 
 public class Render {
 	
 	/**
-	 * Push matrix
+	 * Push a rendering matrix
 	 */
 	public static void push() {
 		glPushMatrix();
 	}
 	
 	/**
-	 * Pop matrix
+	 * Pop a rendering matrix
 	 */
 	public static void pop() {
 		glPopMatrix();
 	}
 	
 	/**
-	 * Translate 
+	 * Translate to a location
 	 * @param x
 	 * @param y
 	 * @param z
@@ -53,28 +54,41 @@ public class Render {
 		glTranslated(x, y, z);
 	}
 	
-	/**
-	 * Translate 
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
 	public static void translate(final double x, final double y) {
 		glTranslated(x, y, 0);
 	}
 	
-	/**
-	 * Translate 
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
 	public static void translate(final VectorD vector) {
 		glTranslated(vector.x, vector.y, vector.z);
 	}
 	
+	public static void translate(final float x, final float y, final float z) {
+		glTranslated(x, y, z);
+	}
+	
+	public static void translate(final float x, final float y) {
+		glTranslated(x, y, 0);
+	}
+	
+	public static void translate(final VectorF vector) {
+		glTranslated(vector.x, vector.y, vector.z);
+	}
+	
+	public static void translate(final int x, final int y, final int z) {
+		glTranslated(x, y, z);
+	}
+	
+	public static void translate(final int x, final int y) {
+		glTranslated(x, y, 0);
+	}
+	
+	public static void translate(final VectorI vector) {
+		glTranslated(vector.x, vector.y, vector.z);
+	}
+	//
+	
 	/**
-	 * Scale
+	 * Scale the rendering
 	 * @param x
 	 * @param y
 	 * @param z
@@ -83,25 +97,41 @@ public class Render {
 		glScaled(x, y, z);
 	}
 	
-	/**
-	 * Scale
-	 * @param x
-	 * @param y
-	 */
 	public static void scale(final double x, final double y) {
 		glScaled(x, y, 0);
 	}
 	
-	/**
-	 * Scale
-	 * @param vector
-	 */
 	public static void scale(final VectorD vector) {
 		glScaled(vector.x, vector.y, vector.z);
 	}
 	
+	public static void scale(final float x, final float y, final float z) {
+		glScaled(x, y, z);
+	}
+	
+	public static void scale(final float x, final float y) {
+		glScaled(x, y, 0);
+	}
+	
+	public static void scale(final VectorF vector) {
+		glScaled(vector.x, vector.y, vector.z);
+	}
+	
+	public static void scale(final int x, final int y, final int z) {
+		glScaled(x, y, z);
+	}
+	
+	public static void scale(final int x, final int y) {
+		glScaled(x, y, 0);
+	}
+	
+	public static void scale(final VectorI vector) {
+		glScaled(vector.x, vector.y, vector.z);
+	}
+	//
+	
 	/**
-	 * Rotate
+	 * Rotate the rendering
 	 * @param x
 	 * @param y
 	 * @param z
@@ -111,17 +141,29 @@ public class Render {
 		glRotated(angle, x, y, z);
 	}
 	
-	/**
-	 * Rotate
-	 * @param vector
-	 * @param angle
-	 */
-	public static void rotate(final VectorI vector, final double angle) {
+	public static void rotate(final VectorD vector, final double angle) {
 		glRotated(angle, vector.x, vector.y, vector.z);
 	}
 	
+	public static void rotate(final float x, final float y, final float z, final float angle) {
+		glRotated(angle, x, y, z);
+	}
+	
+	public static void rotate(final VectorF vector, final float angle) {
+		glRotated(angle, vector.x, vector.y, vector.z);
+	}
+	
+	public static void rotate(final int x, final int y, final int z, final int angle) {
+		glRotated(angle, x, y, z);
+	}
+	
+	public static void rotate(final VectorI vector, final int angle) {
+		glRotated(angle, vector.x, vector.y, vector.z);
+	}
+	//
+	
 	/**
-	 * Start rendering
+	 * Setup for default rendering
 	 */
 	public static void start() {
 		push();
@@ -134,7 +176,7 @@ public class Render {
 	}
 	
 	/**
-	 * End rendering
+	 * Reset the rendering settings
 	 */
 	public static void end() {
 		glEnable(GL_CULL_FACE);
@@ -146,7 +188,7 @@ public class Render {
 	}
 	
 	/**
-	 * Sets the current color
+	 * Set the rendering color
 	 * @param color
 	 */
 	public static void color(final Color color) {
@@ -158,7 +200,7 @@ public class Render {
 	}
 	
 	/**
-	 * Draws a rectangle
+	 * Draw a rectangle at a location
 	 * @param x
 	 * @param y
 	 * @param width
@@ -178,22 +220,34 @@ public class Render {
 		end();
 	}
 	
-	/**
-	 * Draws a rectangle
-	 * @param axes
-	 * @param dimensions
-	 */
 	public static void drawRectangle(final VectorI axes, final VectorI dimensions) {
 		drawRectangle(axes.x, axes.y, dimensions.x, dimensions.y);
 	}
 	
+	public static void drawRectangle(final double x, final double y, final double width, final double height) {
+		drawRectangle((int)x, (int)y, (int)width, (int)height);
+	}
+	
+	public static void drawRectangle(final VectorD axes, final VectorD dimensions) {
+		drawRectangle(axes.x, axes.y, dimensions.x, dimensions.y);
+	}
+	
+	public static void drawRectangle(final float x, final float y, final float width, final float height) {
+		drawRectangle((int)x, (int)y, (int)width, (int)height);
+	}
+	
+	public static void drawRectangle(final VectorF axes, final VectorF dimensions) {
+		drawRectangle(axes.x, axes.y, dimensions.x, dimensions.y);
+	}
+	//
+	
 	/**
-	 * Draws a circle
+	 * Draw a circle at a location
 	 * @param x
 	 * @param y
 	 * @param radius
 	 */
-	public static void drawCircle(final int x, final int y, final double radius) {
+	public static void drawCircle(final int x, final int y, final int radius) {
 		start();
 		glBegin(GL_TRIANGLE_FAN);
 		{
@@ -207,12 +261,24 @@ public class Render {
 		end();
 	}
 	
-	/**
-	 * Draws a circle
-	 * @param axes
-	 * @param radius
-	 */
-	public static void drawCircle(final VectorI axes, final double radius) {
+	public static void drawCircle(final VectorI axes, final int radius) {
 		drawCircle(axes.x, axes.y, radius);
 	}
+	
+	public static void drawCircle(final double x, final double y, final double radius) {
+		drawCircle((int)x, (int)y, radius);
+	}
+	
+	public static void drawCircle(final VectorD axes, final double radius) {
+		drawCircle(axes.x, axes.y, radius);
+	}
+	
+	public static void drawCircle(final float x, final float y, final float radius) {
+		drawCircle((int)x, (int)y, radius);
+	}
+	
+	public static void drawCircle(final VectorF axes, final float radius) {
+		drawCircle(axes.x, axes.y, radius);
+	}
+	//
 }

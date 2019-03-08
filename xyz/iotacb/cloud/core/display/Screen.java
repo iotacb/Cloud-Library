@@ -4,7 +4,7 @@ import xyz.iotacb.cloud.utilities.math.vector.VectorI;
 
 public abstract class Screen {
 	
-	public VectorI screenDimensions; // Stores screenDimensions
+	public VectorI screenDimensions;
 	
 	public Display display;
 	
@@ -13,10 +13,11 @@ public abstract class Screen {
 		this.screenDimensions = display.displayDimensions;
 	}
 	
-	public Screen() {}
-	
-	public abstract void init(); // Will be called when the screen is set in the display
-	public abstract void update(); // Will be called before the draw method
-	public abstract void draw(); // Will be called after the update method
+	/**
+	 * Methods which will be called in the display class
+	 */
+	public abstract void init();
+	public abstract void update();
+	public abstract void draw();
 
 }

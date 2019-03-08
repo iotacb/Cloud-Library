@@ -18,14 +18,27 @@ public abstract class Entity {
 
 	public abstract void init();
 
+	/**
+	 * Will be called in the screen class
+	 */
 	public abstract void update();
-
 	public abstract void draw();
 
+	/**
+	 * Refreshs the screen dimensions for the entity (Should be used when the window is resizeable)
+	 */
 	public void refreshEntity() {
 		this.screenDimensions = display.displayDimensions.makeDouble();
 	}
 
+	/**
+	 * Sets the default movement for the entity
+	 * @param keyUp
+	 * @param keyLeft
+	 * @param keyDown
+	 * @param keyRight
+	 * @param speed
+	 */
 	public void moveEntityWithKeys(final int keyUp, final int keyLeft, final int keyDown, final int keyRight,
 			final VectorD speed) {
 		location.add(
@@ -35,6 +48,14 @@ public abstract class Entity {
 						: display.keyHandler.isKeyDown(keyDown) ? speed.y : 0));
 	}
 	
+	/**
+	 * Sets the default movement for the entity
+	 * @param keyUp
+	 * @param keyLeft
+	 * @param keyDown
+	 * @param keyRight
+	 * @param speed
+	 */
 	public void moveEntityWithKeys(final int keyUp, final int keyLeft, final int keyDown, final int keyRight,
 			final double speed) {
 		location.add(

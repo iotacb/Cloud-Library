@@ -4,9 +4,9 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyHandler {
 	
-	public boolean[] keys;
+	public boolean[] keys; // boolean for each key
 	
-	long window;
+	long window; // ID of window
 	
 	public KeyHandler(final long window) {
 		this.window = window;
@@ -18,7 +18,7 @@ public class KeyHandler {
 	}
 	
 	/**
-	 * Returns true as long the key is pressed
+	 * Returns if given key is pressed
 	 * @param keyCode
 	 * @return
 	 */
@@ -27,7 +27,7 @@ public class KeyHandler {
 	}
 	
 	/**
-	 * Returns true as long the key is pressed
+	 * Returns if given mouse button is pressed
 	 * @param mouseButton
 	 * @return
 	 */
@@ -36,8 +36,7 @@ public class KeyHandler {
 	}
 	
 	/**
-	 * Returns true when the key got pressed
-	 * 
+	 * Returns if given key had been pressed
 	 * @param keyCode
 	 * @return
 	 */
@@ -46,7 +45,7 @@ public class KeyHandler {
 	}
 	
 	/**
-	 * Returns true when the key got released
+	 * Returns if given key had been released
 	 * @param keyCode
 	 * @return
 	 */
@@ -55,16 +54,7 @@ public class KeyHandler {
 	}
 	
 	/**
-	 * Updates the keys
-	 */
-	public void update() {
-		for (int i = 0; i < GLFW_KEY_LAST; i++) {
-			keys[i] = isKeyDown(i);
-		}
-	}
-	
-	/**
-	 * Returns true when no key is pressed
+	 * Returns if no buttons are pressed
 	 * @return
 	 */
 	public boolean nonePressed() {
@@ -76,5 +66,15 @@ public class KeyHandler {
 		}
 		return r;
 	}
+	
+	/**
+	 * Updates all keys
+	 */
+	public void update() {
+		for (int i = 0; i < GLFW_KEY_LAST; i++) {
+			keys[i] = isKeyDown(i);
+		}
+	}
+	
 
 }

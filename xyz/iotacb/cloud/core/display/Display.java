@@ -51,7 +51,6 @@ import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryUtil;
 
 import xyz.iotacb.cloud.core.display.input.KeyHandler;
@@ -61,21 +60,20 @@ import xyz.iotacb.cloud.utilities.math.vector.VectorI;
 
 public class Display {
 
-	public VectorI displayDimensions, frameBufferSize; // Stores window and framebuffer sizes
+	public VectorI displayDimensions, frameBufferSize; // Stores sizes
 	
-	public boolean resizeable, windowed;
+	public boolean resizeable, windowed; // Window should be resizeable, window should be windowed
 	
-	public long mainMonitor, window;
+	public long mainMonitor, window; // Main monitor ID, window ID
 
-	public String title;
+	public String title; // Window title
 	
-	public Screen mainScreen;
+	public Screen mainScreen; // Main screen which should be rendered
 	
-	public int mouseX, mouseY, swapInterval = 0;
+	public int mouseX, mouseY, swapInterval = 0; // Mouse location, swap interval of GLFW
 	
-	public KeyHandler keyHandler;
+	public KeyHandler keyHandler; // Keyhandler for key input
 	
-	GLCapabilities caps;
 	GLFWFramebufferSizeCallback frameBufferCallback;
 	GLFWWindowSizeCallback windowSizeCallback;
 	
@@ -89,21 +87,17 @@ public class Display {
 	}
 	
 	/**
-	 * Sets up the window
-	 * @throws CloudInitializeException 
-	 * @throws CloudCreateException 
+	 * Initialize the window and set default settings
+	 * @throws CloudInitializeException
+	 * @throws CloudCreateException
 	 */
 	void init() throws CloudInitializeException, CloudCreateException {
 		if (!glfwInit()) throw new CloudInitializeException("Failed to initialize GLFW");
-		
-		// Window settings
 		
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, (resizeable ? GLFW_TRUE : GLFW_FALSE));
 		glfwWindowHint(GLFW_SAMPLES, 4);
-		
-		//
 		
 		mainMonitor = glfwGetPrimaryMonitor();
 		
@@ -117,8 +111,6 @@ public class Display {
 		window = glfwCreateWindow(displayDimensions.x, displayDimensions.y, title, (windowed ? 0L : mainMonitor), 0L);
 		
 		if (window == 0L) throw new CloudCreateException("Failed to create Window");
-		
-		// Callbacks
 		
 		glfwSetFramebufferSizeCallback(window, frameBufferCallback = new GLFWFramebufferSizeCallback() {
 			
@@ -140,8 +132,6 @@ public class Display {
 			}
 		});
 		
-		//
-		
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(0);
 		glfwShowWindow(window);
@@ -150,7 +140,7 @@ public class Display {
 		nglfwGetFramebufferSize(window, MemoryUtil.memAddress(bufferSize), MemoryUtil.memAddress(bufferSize) + 4);
 		frameBufferSize = new VectorI(bufferSize.get(0), bufferSize.get(1));
 		
-		caps = GL.createCapabilities();
+		GL.createCapabilities();
 		
 		keyHandler = new KeyHandler(window);
 		
@@ -161,9 +151,9 @@ public class Display {
 	}
 	
 	/**
-	 * Handles the shutdown of the program
+	 * Stops GLFW and exits the application (Stuff that should be runned at shutdown can be hooked here)
 	 */
-	void shutdown() {
+	public void shutdown() {
 		glfwTerminate();
 		System.exit(0);
 	}
@@ -180,8 +170,8 @@ public class Display {
 	}
 	
 	/**
-	 * Updates the display and all of it's components
-	 * @throws CloudInitializeException 
+	 * Updates the window
+	 * @throws CloudInitializeException
 	 */
 	public void update() throws CloudInitializeException {
 		while (!glfwWindowShouldClose(window)) {
@@ -197,14 +187,15 @@ public class Display {
 			
 			if (mainScreen == null) throw new CloudInitializeException("Failed to initialize Screen");
 			
-			mainScreen.update(); // Update before drawing
+			mainScreen.update();
 			mainScreen.draw();
 			mainScreen.screenDimensions = displayDimensions;
 			
 			glfwSwapBuffers(window);
 			
-			keyHandler.update();
 			updateCursor();
+			
+			keyHandler.update();
 			
 			glfwPollEvents();
 			
@@ -214,7 +205,7 @@ public class Display {
 	}
 	
 	/**
-	 * Sets the main screen wich will be rendered as default
+	 * Change the main screen which should be rendered
 	 * @param mainScreen
 	 */
 	public void setMainScreen(final Screen mainScreen) {
@@ -222,6 +213,10 @@ public class Display {
 		this.mainScreen.init();
 	}
 	
+	/**
+	 * Change the main screen which should be rendered
+	 * @param clazz
+	 */
 	public void setMainScreen(final Class<? extends Screen> clazz) {
 		try {
 			this.mainScreen = (Screen) clazz.getConstructor(this.getClass()).newInstance(this);
@@ -231,10 +226,8 @@ public class Display {
 		}
 	}
 	
-	//
-	
 	/**
-	 * Sets the opacity of the Display (0.0 - 1.0)
+	 * Change the display opacit of the window
 	 * @param opacity
 	 */
 	public void setDisplayOpacity(final float opacity) {
@@ -242,7 +235,7 @@ public class Display {
 	}
 	
 	/**
-	 * Sets the background color of the screen
+	 * Change the background color
 	 * @param color
 	 */
 	public void setBackgroundColor(final Color color) {
@@ -254,7 +247,7 @@ public class Display {
 	}
 	
 	/**
-	 * Set the swap interval
+	 * Change the swap interval of GLFW
 	 * @param swapInterval
 	 */
 	public void setSwapInterval(int swapInterval) {

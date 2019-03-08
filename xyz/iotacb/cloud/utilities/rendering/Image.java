@@ -34,15 +34,17 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+import xyz.iotacb.cloud.utilities.math.vector.VectorD;
+import xyz.iotacb.cloud.utilities.math.vector.VectorF;
 import xyz.iotacb.cloud.utilities.math.vector.VectorI;
 
 public class Image {
 
-	String path;
+	String path; // Path to image
 
-	int id, width, height;
+	int id, width, height; // Texture ID, image width, image height
 	
-	Image[] images;
+	Image[] images; // Multiple image locations (for image list)
 
 	public Image(final String path) {
 		this.path = path;
@@ -55,8 +57,7 @@ public class Image {
 	}
 
 	/**
-	 * Draws a image
-	 * 
+	 * Draw a single image to a location
 	 * @param x
 	 * @param y
 	 * @param w
@@ -127,7 +128,16 @@ public class Image {
 	public void draw(final VectorI axes, final VectorI dimensions) {
 		draw(axes.x, axes.y, dimensions.x, dimensions.y);
 	}
+	//
 	
+	/**
+	 * Draws a wanted image out of the image list at a location
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param index
+	 */
 	public void draw(int x, int y, final int w, final int h, final int index) {
 		if (this.images.length > 0) {
 			this.images[index].draw(x, y, w, h);
@@ -139,5 +149,80 @@ public class Image {
 			this.images[index].draw(axes, dimensions);
 		}
 	}
+	//
+	
+	/**
+	 * Draw a single image to a location
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	public void draw(double x, double y, final double w, final double h) {
+		draw((int)x, (int)y, (int)w, (int)h);
+	}
+
+	public void draw(final VectorD axes, final VectorD dimensions) {
+		draw(axes.x, axes.y, dimensions.x, dimensions.y);
+	}
+	//
+	
+	/**
+	 * Draws a wanted image out of the image list at a location
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param index
+	 */
+	public void draw(double x, double y, final double w, final double h, final int index) {
+		if (this.images.length > 0) {
+			this.images[index].draw(x, y, w, h);
+		}
+	}
+
+	public void draw(final VectorD axes, final VectorD dimensions, final int index) {
+		if (this.images.length > 0) {
+			this.images[index].draw(axes, dimensions);
+		}
+	}
+	//
+	
+	/**
+	 * Draw a single image to a location
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	public void draw(float x, float y, final float w, final float h) {
+		draw((int)x, (int)y, (int)w, (int)h);
+	}
+
+	public void draw(final VectorF axes, final VectorF dimensions) {
+		draw(axes.x, axes.y, dimensions.x, dimensions.y);
+	}
+	//
+	
+	/**
+	 * Draws a wanted image out of the image list at a location
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param index
+	 */
+	public void draw(float x, float y, final float w, final float h, final int index) {
+		if (this.images.length > 0) {
+			this.images[index].draw(x, y, w, h);
+		}
+	}
+
+	public void draw(final VectorF axes, final VectorF dimensions, final int index) {
+		if (this.images.length > 0) {
+			this.images[index].draw(axes, dimensions);
+		}
+	}
+	//
 
 }

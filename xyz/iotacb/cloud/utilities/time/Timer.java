@@ -5,11 +5,11 @@ public class Timer {
 	private long pastMS;
 	
 	/**
-	 * Returns true when the delay is over
+	 * Returns if a amount of milliseconds has passed
 	 * @param milliseconds
 	 * @return
 	 */
-	public boolean isOver(final long milliseconds) {
+	public boolean isPassed(final long milliseconds) {
 		if (System.currentTimeMillis() - pastMS > milliseconds) {
 			pastMS = System.currentTimeMillis();
 			return true;
