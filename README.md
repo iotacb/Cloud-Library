@@ -1,3 +1,5 @@
+![cloud](https://raw.githubusercontent.com/iotacb/Cloud-Engine/master/resources/banner.png)
+
 # What is Cloud?
 Cloud is a simple 2D game engine written in Java. I started creating it because I wanted to make a little game in Java using OpenGL, but I think LWJGL is really confusing sometimes and I wanted to make it easier for me to make little games.
 Cloud is very easy to use and can be setup very fast, so if you wan't to try it head over to the release page [here](https://github.com/iotacb/Cloud-Engine/releases) and download the library.
