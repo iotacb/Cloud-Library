@@ -51,5 +51,5 @@ public class Main {
 ```
 
 Thats it, now you can run the application and look onto your empty window!
-You now can go to the render setup [here](https://github.com/iotacb/Cloud-Engine/tutorials/The-first-window/circle.md)!
+You now can go to the render setup [here](https://github.com/iotacb/Cloud-Library/blob/master/tutorials/Rendering%20a%20circle/circle.md)!
 
