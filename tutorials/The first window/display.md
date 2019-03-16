@@ -5,7 +5,7 @@ In the main class create a initialized display variable inside of the main metho
 public class Main {
 
 	public static void main(String[] args) throws CloudInitializeException, CloudCreateException {
-		Display display = new Display(new VectorI(600, 600), "Creating the window", false, true); // Creates the window
+		Display display = new Display(new VectorI(600, 600), "Creating the window", false, false); // Creates the window
 	}
 
 }
@@ -40,7 +40,7 @@ Now go back into the main class and add your created screen class to the display
 public class Main {
 
 	public static void main(String[] args) throws CloudInitializeException, CloudCreateException {
-		Display display = new Display(new VectorI(600, 600), "Creating the window", false, true); // Creates the Window
+		Display display = new Display(new VectorI(600, 600), "Creating the window", false, false); // Creates the Window
 		
 		display.setMainScreen(RenderingScreen.class); // Set the screen
 		
