@@ -1,14 +1,20 @@
 package xyz.iotacb.cloud.utilities.rendering;
 
-import xyz.iotacb.cloud.utilities.lists.*;
-import java.awt.*;
-import org.lwjgl.opengl.*;
-import javax.imageio.*;
-import org.lwjgl.*;
-import java.io.*;
-import java.awt.image.*;
-import java.nio.*;
-import xyz.iotacb.cloud.utilities.math.vector.*;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+
+import xyz.iotacb.cloud.utilities.lists.ImageList;
+import xyz.iotacb.cloud.utilities.math.vector.VectorD;
+import xyz.iotacb.cloud.utilities.math.vector.VectorF;
+import xyz.iotacb.cloud.utilities.math.vector.VectorI;
 
 public class Image
 {

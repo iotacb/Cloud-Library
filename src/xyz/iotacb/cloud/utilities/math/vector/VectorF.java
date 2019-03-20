@@ -683,6 +683,46 @@ public class VectorF {
 	//
 	
 	/**
+	 * Randomize the vector
+	 * @param minX
+	 * @param maxX
+	 * @param minY
+	 * @param maxY
+	 * @param minZ
+	 * @param maxZ
+	 */
+	public void randomize(final float minX, final float maxX, final float minY, final float maxY, final float minZ, final float maxZ) {
+		float x = Random.randomFloat(minX, maxX);
+		float y = Random.randomFloat(minY, maxY);
+		float z = Random.randomFloat(minZ, maxZ);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
+	public void randomize(final float minX, final float maxX, final float minY, final float maxY) {
+		float x = Random.randomFloat(minX, maxX);
+		float y = Random.randomFloat(minY, maxY);
+		this.x = x;
+		this.y = y;
+	}
+	
+	public void randomize(final float minX, final float maxX) {
+		float x = Random.randomFloat(minX, maxX);
+		this.x = x;
+	}
+	
+	public void randomize(final VectorF min, final VectorF max) {
+		float x = Random.randomFloat(min.x, max.x);
+		float y = Random.randomFloat(min.y, max.y);
+		float z = Random.randomFloat(min.z, max.z);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	//
+	
+	/**
 	 * Create a vector with same axes
 	 * @param value
 	 * @return

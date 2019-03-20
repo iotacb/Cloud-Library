@@ -27,4 +27,15 @@ public class Colors {
 		return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 	}
 	
+	/**
+	 * Creates a rainbow effect
+	 * @param offset
+	 * @param fade
+	 * @return
+	 */
+	public static Color rainbow(final long offset) {
+		float colorHue = (System.nanoTime() + offset) / 1.0e10f % 1.0F;
+		return new Color(Color.HSBtoRGB(colorHue, 1.0F, 1.0F));
+	}
+	
 }

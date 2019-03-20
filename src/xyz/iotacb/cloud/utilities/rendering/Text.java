@@ -31,7 +31,7 @@ public class Text {
 	 * @param text
 	 * @param color
 	 */
-	public void drawText(final int x, final int y, final String text, Color color) {
+	public void drawText(final double x, final double y, final String text, Color color) {
 		if (color == null)
 			color = Color.white;
 		
@@ -56,20 +56,12 @@ public class Text {
 		Render.end();
 	}
 
-	public void drawText(final int x, final int y, final String text) {
-		drawText(x, y, text, null);
-	}
-
 	public void drawText(final VectorI vector, final String text, final Color color) {
 		drawText(vector.x, vector.y, text, color);
 	}
 
 	public void drawText(final VectorI vector, final String text) {
 		drawText(vector.x, vector.y, text);
-	}
-	
-	public void drawText(final double x, final double y, final String text, Color color) {
-		drawText((int)x, (int)y, text, color);
 	}
 
 	public void drawText(final double x, final double y, final String text) {
@@ -82,14 +74,6 @@ public class Text {
 
 	public void drawText(final VectorD vector, final String text) {
 		drawText(vector.x, vector.y, text);
-	}
-	
-	public void drawText(final float x, final float y, final String text, Color color) {
-		drawText((int)x, (int)y, text, color);
-	}
-
-	public void drawText(final float x, final float y, final String text) {
-		drawText(x, y, text, null);
 	}
 
 	public void drawText(final VectorF vector, final String text, final Color color) {

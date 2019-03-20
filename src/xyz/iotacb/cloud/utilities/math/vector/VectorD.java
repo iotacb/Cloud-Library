@@ -683,6 +683,46 @@ public class VectorD {
 	//
 	
 	/**
+	 * Randomize the vector
+	 * @param minX
+	 * @param maxX
+	 * @param minY
+	 * @param maxY
+	 * @param minZ
+	 * @param maxZ
+	 */
+	public void randomize(final double minX, final double maxX, final double minY, final double maxY, final double minZ, final double maxZ) {
+		double x = Random.randomDouble(minX, maxX);
+		double y = Random.randomDouble(minY, maxY);
+		double z = Random.randomDouble(minZ, maxZ);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
+	public void randomize(final double minX, final double maxX, final double minY, final double maxY) {
+		double x = Random.randomDouble(minX, maxX);
+		double y = Random.randomDouble(minY, maxY);
+		this.x = x;
+		this.y = y;
+	}
+	
+	public void randomize(final double minX, final double maxX) {
+		double x = Random.randomDouble(minX, maxX);
+		this.x = x;
+	}
+	
+	public void randomize(final VectorD min, final VectorD max) {
+		double x = Random.randomDouble(min.x, max.x);
+		double y = Random.randomDouble(min.y, max.y);
+		double z = Random.randomDouble(min.z, max.z);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	//
+	
+	/**
 	 * Create a vector with same axes
 	 * @param value
 	 * @return

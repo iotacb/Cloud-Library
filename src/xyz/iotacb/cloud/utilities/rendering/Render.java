@@ -206,10 +206,6 @@ public class Render {
 	 * @param width
 	 * @param height
 	 */
-	public static void drawRectangle(final int x, final int y, final int width, final int height) {
-		drawRectangle(x, y, width, height);
-	}
-	
 	public static void drawRectangle(final VectorI axes, final VectorI dimensions) {
 		drawRectangle(axes.x, axes.y, dimensions.x, dimensions.y);
 	}
@@ -232,10 +228,6 @@ public class Render {
 		drawRectangle(axes.x, axes.y, dimensions.x, dimensions.y);
 	}
 	
-	public static void drawRectangle(final float x, final float y, final float width, final float height) {
-		drawRectangle((int)x, (int)y, (int)width, (int)height);
-	}
-	
 	public static void drawRectangle(final VectorF axes, final VectorF dimensions) {
 		drawRectangle(axes.x, axes.y, dimensions.x, dimensions.y);
 	}
@@ -247,10 +239,6 @@ public class Render {
 	 * @param y
 	 * @param radius
 	 */
-	public static void drawCircle(final int x, final int y, final int radius) {
-		drawCircle(x, y, radius);
-	}
-	
 	public static void drawCircle(final VectorI axes, final int radius) {
 		drawCircle(axes.x, axes.y, radius);
 	}
@@ -271,10 +259,6 @@ public class Render {
 	
 	public static void drawCircle(final VectorD axes, final double radius) {
 		drawCircle(axes.x, axes.y, radius);
-	}
-	
-	public static void drawCircle(final float x, final float y, final float radius) {
-		drawCircle((int)x, (int)y, (int)radius);
 	}
 	
 	public static void drawCircle(final VectorF axes, final float radius) {

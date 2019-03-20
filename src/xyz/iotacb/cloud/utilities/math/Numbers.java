@@ -18,7 +18,10 @@ public class Numbers {
 	}
 	
 	public static double constrain(double num, final double min, final double max) {
-		return (num > max ? max : num > min ? min : num);
+//		return (num > max ? max : num > min ? min : num);
+		if (num > max) num = max;
+		if (num < min) num = min;
+		return num;
 	}
 	//
 

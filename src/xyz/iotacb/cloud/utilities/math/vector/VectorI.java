@@ -1,6 +1,8 @@
 package xyz.iotacb.cloud.utilities.math.vector;
 
 import xyz.iotacb.cloud.utilities.math.Random;
+import xyz.iotacb.cloud.utilities.math.vector.VectorD;
+import xyz.iotacb.cloud.utilities.math.vector.VectorF;
 
 public class VectorI {
 	
@@ -679,6 +681,46 @@ public class VectorI {
 	
 	public boolean outOfRange(final VectorI min, final VectorI max) {
 		return (outOfRange(min.x, max.x, max.z, max.y));
+	}
+	//
+	
+	/**
+	 * Randomize the vector
+	 * @param minX
+	 * @param maxX
+	 * @param minY
+	 * @param maxY
+	 * @param minZ
+	 * @param maxZ
+	 */
+	public void randomize(final int minX, final int maxX, final int minY, final int maxY, final int minZ, final int maxZ) {
+		int x = Random.randomInt(minX, maxX);
+		int y = Random.randomInt(minY, maxY);
+		int z = Random.randomInt(minZ, maxZ);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
+	public void randomize(final int minX, final int maxX, final int minY, final int maxY) {
+		int x = Random.randomInt(minX, maxX);
+		int y = Random.randomInt(minY, maxY);
+		this.x = x;
+		this.y = y;
+	}
+	
+	public void randomize(final int minX, final int maxX) {
+		int x = Random.randomInt(minX, maxX);
+		this.x = x;
+	}
+	
+	public void randomize(final VectorI min, final VectorI max) {
+		int x = Random.randomInt(min.x, max.x);
+		int y = Random.randomInt(min.y, max.y);
+		int z = Random.randomInt(min.z, max.z);
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 	//
 	
