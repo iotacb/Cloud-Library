@@ -1,0 +1,81 @@
+package xyz.iotacb.cloud.core.display;
+
+import xyz.iotacb.cloud.core.gui.Button;
+import xyz.iotacb.cloud.entity.Entity;
+import xyz.iotacb.cloud.utilities.lists.CloudList;
+import xyz.iotacb.cloud.utilities.math.Vector3;
+
+public abstract class Screen {
+	
+	/**
+	 * Dimensions of the screen
+	 */
+	public Vector3 screenDimensions;
+	
+	/**
+	 * Display variable which you created in your main method of your application
+	 */
+	public Display display;
+	
+	/**
+	 * Add your buttons to this list
+	 */
+	public CloudList<Button> buttonList;
+	
+	/**
+	 * Add your entities to this list
+	 */
+	public CloudList<Entity> entities;
+	
+	/**
+	 * Create the screen
+	 * @param display
+	 */
+	public Screen(final Display display) {
+		this.display = display;
+		this.screenDimensions = display.displayDimensions;
+		this.buttonList = new CloudList<Button>();
+		this.entities = new CloudList<Entity>();
+	}
+	
+	/**
+	 * This method will be called when the screen is set
+	 */
+	public abstract void init();
+	
+	/**
+	 * This method will be called in the update loop of the display
+	 */
+	public abstract void update();
+	
+	/**
+	 * This method will be called in the rendering loop of the display
+	 */
+	public abstract void draw();
+	
+	/**
+	 * Draw all button within the button list
+	 */
+	public void drawButtons() {
+		this.buttonList.forEach(b -> {
+			b.draw();
+			if (b.isHovered()) {
+				if (display.inputHandler.isMouseButtonDown(0)) {
+					if (!b.isClicked()) {
+						buttonActions(b);
+						b.setClicked(true);
+					}
+				} else {
+					b.setClicked(false);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Add the actions of your buttons inside this method
+	 * @param button
+	 */
+	public void buttonActions(final Button button) {}
+	
+}
