@@ -44,4 +44,4 @@ Now we can set the screen of the display and change some other settings.
 	}
 ```
 That's it, now you can run your application and look at your created window.
-In the next part you'll learn about basic rendering in cloud. Learn [here]() how.
+In the next part you'll learn about basic rendering in cloud. Learn [here](https://github.com/iotacb/Cloud-Library/blob/master/tutorials/Basic%20rendering/basic-rendering.md) how.
