@@ -10,4 +10,4 @@ As I said, Cloud is just a fun project so you shouldn't use it if you want to ma
 I made some little demo games, go watch them [here]().
 
 # How to start?
-If you want to start with Cloud, click [here]() to get to the tutorial sites.
+If you want to start with Cloud, click [here](https://github.com/iotacb/Cloud-Library/blob/master/tutorials/Installation/cloud-installation.md) to get to the installation site.
