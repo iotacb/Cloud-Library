@@ -1,21 +1,16 @@
 package xyz.iotacb.cloud.utilities.collisions;
 
-import java.awt.Color;
-
 import xyz.iotacb.cloud.entity.Entity;
-import xyz.iotacb.cloud.utilities.color.Colors;
 import xyz.iotacb.cloud.utilities.lists.CloudList;
 import xyz.iotacb.cloud.utilities.math.Vector;
-import xyz.iotacb.cloud.utilities.rendering.Render;
 
 public class Bounds {
 
 	public Vector location, dimensions;
 	private Entity myself;
-	public Bounds[] bounds;
-
+	
 	/**
-	 * This creates a new bounds for the given parameters, additionally there are five more bounds created, which surround the main bounds
+	 * Create the bounding box
 	 * @param x
 	 * @param y
 	 * @param width
@@ -23,14 +18,13 @@ public class Bounds {
 	 * @param myself
 	 */
 	public Bounds(final double x, final double y, final double width, final double height, final Entity myself) {
-		this.location = new Vector(x, y);
-		this.dimensions = new Vector(width, height);
+		this.location = Vector.createVector(x, y);
+		this.dimensions = Vector.createVector(width, height);
 		this.myself = myself;
-		setupSurroundingBounds(location, dimensions, myself, true);
 	}
-
+	
 	/**
-	 * This creates a new bounds for the given parameters, additionally there are five more bounds created, which surround the main bounds
+	 * Create the bounding box
 	 * @param location
 	 * @param dimensions
 	 * @param myself
@@ -39,105 +33,167 @@ public class Bounds {
 		this.location = location;
 		this.dimensions = dimensions;
 		this.myself = myself;
-		setupSurroundingBounds(location, dimensions, myself, true);
 	}
 	
 	/**
-	 * Don't use this constructor, it is used to create the surrounding boundes.
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param myself
-	 * @param useit
+	 * Create the bounding box from a another one
+	 * @param bounds
 	 */
-	@Deprecated
-	public Bounds(final double x, final double y, final double width, final double height, final Entity myself, final boolean useit) {
-		this.location = new Vector(x, y);
-		this.dimensions = new Vector(width, height);
-		this.myself = myself;
+	public Bounds(final Bounds bounds) {
+		this.location = bounds.location;
+		this.dimensions = bounds.dimensions;
+		this.myself = bounds.myself;
 	}
-
+	
 	/**
-	 * Don't use this constructor, it is used to create the surrounding bounds.
-	 * @param location
-	 * @param dimensions
-	 * @param myself
-	 * @param useit
-	 */
-	@Deprecated
-	public Bounds(final Vector location, final Vector dimensions, final Entity myself, final boolean useit) {
-		this.location = location;
-		this.dimensions = dimensions;
-		this.myself = myself;
-	}
-
-	private void setupSurroundingBounds(final Vector location, final Vector dimensions, final Entity myself, final boolean useit) {
-		int size = 10;
-		this.bounds = new Bounds[] {
-				new Bounds(Vector.createVector(location.x, location.y), Vector.createVector(dimensions.x, size), myself, useit), // Top
-				new Bounds(Vector.createVector(location.x, location.y + size), Vector.createVector(size, dimensions.y - size), myself, useit), // Left
-				new Bounds(Vector.createVector(location.x + size, location.y + dimensions.y - size), Vector.createVector(dimensions.x - size, size), myself, useit), // Bottom
-				new Bounds(Vector.createVector(location.x + dimensions.x - size, location.y + size), Vector.createVector(size, dimensions.y - (size * 2)), myself, useit) // Right
-		};
-	}
-
-	/**
-	 * This method will check if this bounds intersects with the given one in the parameter
+	 * Checks if the bounding box intersects with a bounding box
 	 * @param bounds
 	 * @return
 	 */
 	public boolean intersects(final Bounds bounds) {
 		return Collisions.rectIntersectsRect(location, dimensions, bounds.location, bounds.dimensions);
 	}
-
+	
 	/**
-	 * This method will check if this bounds intersects with the bounds of a entity from the given entity list
+	 * Checks if the bounding box intersects with a other bounding box of a entity
 	 * @param entities
 	 * @return
 	 */
 	public boolean intersects(final CloudList<Entity> entities) {
+		boolean intersects = false;
 		for (Entity entity : entities) {
-			if (myself.equals(entity))
-				continue;
-			if (myself.getBounds().intersects(entity.getBounds())) {
-				return true;
+			if (intersects(entity.getBounds())) {
+				intersects = true;
 			}
 		}
-		return false;
+		return intersects;
 	}
 	
 	/**
-	 * This method returns if the bounds is a rectangle the side which the bounds collided with (0 = Bottom side, 1 = Right side, 2 = Top side, 3 = Left side)
+	 * Checks on which side the hitbox collided
+	 * -1 = None, 0 = Top, 1 = Left, 2 = Bottom, 3 = Right
 	 * @param bounds
 	 * @return
 	 */
-	public int collisionSide(final Bounds bounds) {
+	public int getCollisionSide(final Bounds bounds) {
 		int side = -1;
-		for (int i = 0; i < this.bounds.length; i++) {
-			if (this.bounds[i].intersects(bounds)) {
-				side = i;
+		Bounds own = copy();
+		if (bounds.intersects(own)) {
+			if (Math.abs(own.getCenterX() - bounds.getCenterX()) < Math.abs(own.getCenterY() - bounds.getCenterY())) {
+				if (own.getCenterY() < bounds.getCenterY()) {
+					side = 0; // Top
+				}
+				if (own.getCenterY() > bounds.getCenterY()) {
+					side = 2; // Bottom
+				}
+			} else {
+				if (own.getCenterX() < bounds.getCenterX()) {
+					side = 1; // Left;
+				}
+				if (own.getCenterX() > bounds.getCenterX()) {
+					side = 3; // Right;
+				}
 			}
 		}
 		return side;
 	}
 	
 	/**
-	 * This method will render the surrounding bounds of the main bounds
+	 * Checks on which side the hitbox collided
+	 * -1 = None, 0 = Top, 1 = Left, 2 = Bottom, 3 = Right
+	 * @param entities
+	 * @return
 	 */
-	public void drawSurroundingBounds() {
-		for (Bounds b : this.bounds) {
-			Render.color(Colors.addAlpha(Color.green, 100));
-			Render.drawRectangle(b.location, b.dimensions);
+	public int getCollisionSide(final CloudList<Entity> entities) {
+		int side = -1;
+		Bounds own = copy();
+		for (Entity entity : entities) {
+			Bounds bounds = entity.getBounds().copy();
+			if (bounds.intersects(own)) {
+				if (Math.abs(own.getCenterX() - bounds.getCenterX()) < Math.abs(own.getCenterY() - bounds.getCenterY())) {
+					if (own.getCenterY() < bounds.getCenterY()) {
+						side = 0; // Top
+					}
+					if (own.getCenterY() > bounds.getCenterY()) {
+						side = 2; // Bottom
+					}
+				} else {
+					if (own.getCenterX() < bounds.getCenterX()) {
+						side = 1; // Left;
+					}
+					if (own.getCenterX() > bounds.getCenterX()) {
+						side = 3; // Right;
+					}
+				}
+			}
+		}
+		return side;
+	}
+	
+	/**
+	 * Handle movement collision for a other entity
+	 * @param other
+	 */
+	public void stopMovement(final Entity other) {
+		Bounds own = this.myself.getBounds().copy();
+		Bounds bounds = other.getBounds().copy();
+		if (own.getCollisionSide(bounds) == 0) {
+			this.myself.location.y = bounds.location.y - own.dimensions.y;
+			this.myself.gravity.y = 0;
+		}
+		if (own.getCollisionSide(bounds) == 1) {
+			this.myself.location.x = bounds.location.x - own.dimensions.x;
+		}
+		if (own.getCollisionSide(bounds) == 2) {
+			this.myself.location.y = bounds.location.y + bounds.dimensions.y;
+			this.myself.gravity.y = 0.1;
+		}
+		if (own.getCollisionSide(bounds) == 3) {
+			this.myself.location.x = bounds.location.x + bounds.dimensions.x;
 		}
 	}
 	
 	/**
-	 * Creates a copy of the bounds
+	 * Handle movment collision for multiple entities
+	 * @param entities
+	 */
+	public void stopMovement(final CloudList<Entity> entities) {
+		for (Entity entity : entities) {
+			stopMovement(entity);
+		}
+	}
+	
+	/**
+	 * Get the center x of the bounding box
 	 * @return
 	 */
+	public double getCenterX() {
+		return location.x + dimensions.getCenter().x;
+	}
+	
+	/**
+	 * Get the center y of the bounding box
+	 * @return
+	 */
+	public double getCenterY() {
+		return location.y + dimensions.getCenter().y;
+	}
+	
+	/**
+	 * Get the center x and y of the bounding box
+	 * @return
+	 */
+	public Vector getCenter() {
+		return Vector.createVector(getCenterX(), getCenterY());
+	}
+	
 	public Bounds copy() {
-		return new Bounds(location, dimensions, myself);
+		return new Bounds(this);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("(%s, %s, %s, %s)", location.x, location.y, dimensions.x, dimensions.y);
 	}
 	
 }

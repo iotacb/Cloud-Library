@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -28,6 +29,8 @@ import xyz.iotacb.cloud.core.display.Display;
 import xyz.iotacb.cloud.utilities.math.Vector;
 
 public class Render {
+	
+	public static Display display;
 	
 	/**
 	 * Create a OpenGL push matrix
@@ -194,6 +197,7 @@ public class Render {
 	 * @param height
 	 */
 	public static void drawRectangle(final double x, final double y, final double width, final double height) {
+		if (!canBeRendered(display, x, y, width, height)) return;
 		start();
 		glBegin(GL_QUADS);
 		{
@@ -247,12 +251,36 @@ public class Render {
 	 * @param radius
 	 */
 	public static void drawCircle(final double x, final double y, final double radius) {
+		if (!canBeRendered(display, x, y, radius, radius)) return;
+		int points = 360;
 		start();
 		glBegin(GL_TRIANGLE_FAN);
 		{
-			for (int i = 0; i < 360; i++) {
-				double x2 = (Math.sin((i * Math.PI) / 180)) * radius;
-				double y2 = (Math.cos((i * Math.PI) / 180)) * radius;
+			for (int i = 0; i < points; i++) {
+				double x2 = (Math.cos((i * (2 * Math.PI)) / points)) * radius;
+				double y2 = (Math.sin((i * (2 * Math.PI)) / points)) * radius;
+				glVertex2d(x + x2 + radius, y + y2 + radius);
+			}
+		}
+		glEnd();
+		stop();
+	}
+	
+	/**
+	 * Draw a circle at a location with a radius and set the polygon amounts
+	 * @param x
+	 * @param y
+	 * @param points
+	 * @param radius
+	 */
+	public static void drawCircle(final double x, final double y, final int polygons, final double radius) {
+		if (!canBeRendered(display, x, y, radius, radius)) return;
+		start();
+		glBegin(GL_TRIANGLE_FAN);
+		{
+			for (int i = 0; i < polygons; i++) {
+				double x2 = (Math.cos((i * (2 * Math.PI)) / polygons)) * radius;
+				double y2 = (Math.sin((i * (2 * Math.PI)) / polygons)) * radius;
 				glVertex2d(x + x2 + radius, y + y2 + radius);
 			}
 		}
@@ -273,12 +301,37 @@ public class Render {
 	}
 	
 	/**
+	 * Draw a circle at a location with a radius and set the rendering color and set the polygon amounts
+	 * Use this circle method for smaller circle to increase performance
+	 * @param x
+	 * @param y
+	 * @param radius
+	 * @param polygons
+	 * @param color
+	 */
+	public static void drawCircle(final double x, final double y, final double radius, final int polygons, final Color color) {
+		Render.color(color);
+		drawCircle(x, y, polygons, radius);
+	}
+	
+	/**
 	 * Draw a circle at a location with a radius
 	 * @param axes
 	 * @param radius
 	 */
 	public static void drawCircle(final Vector axes, final double radius) {
 		drawCircle(axes.x, axes.y, radius);
+	}
+	
+	/**
+	 * Draw a circle at a location with a radius and set the polygons
+	 * Use this circle method for smaller circle to increase performance
+	 * @param axes
+	 * @param polygons
+	 * @param radius
+	 */
+	public static void drawCircle(final Vector axes, final int polygons, final double radius) {
+		drawCircle(axes.x, axes.y, polygons, radius);
 	}
 	
 	/**
@@ -290,6 +343,17 @@ public class Render {
 	public static void drawCircle(final Vector axes, final double radius, final Color color) {
 		drawCircle(axes.x, axes.y, radius, color);
 	}
+	
+	/**
+	 * Draw a circle at a location with a radius and set the rendering color and set the polygon amounts
+	 * Use this circle method for smaller circle to increase performance
+	 * @param axes
+	 * @param radius
+	 * @param color
+	 */
+	public static void drawCircle(final Vector axes, final double radius, final int polygons, final Color color) {
+		drawCircle(axes.x, axes.y, radius, polygons, color);
+	}
 
 
 	/**
@@ -300,6 +364,7 @@ public class Render {
 	 * @param angle
 	 */
 	public static void drawTriangle(final double x, final double y, final double sideLength, final double angle) {
+		if (!canBeRendered(display, x, y, sideLength, sideLength)) return;
 		start();
 		translate(x, y);
 		rotate(0, 0, 1, angle-210);
@@ -349,6 +414,7 @@ public class Render {
 	 * @param angle
 	 */
 	public static void drawPolygon(final double x, final double y, final int sides, double sideLength, final double angle) {
+		if (!canBeRendered(display, x, y, sideLength, sideLength)) return;
 		start();
 		translate(x, y);
 		rotate(0, 0, 1, angle-210);

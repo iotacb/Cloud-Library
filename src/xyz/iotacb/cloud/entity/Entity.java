@@ -102,7 +102,7 @@ public abstract class Entity {
 		}
 		return others;
 	}
-
+	
 	/**
 	 * Move the entity with custom keys and custom speed
 	 * @param keyUp

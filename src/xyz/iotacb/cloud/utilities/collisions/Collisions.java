@@ -74,7 +74,26 @@ public class Collisions {
 	 * @return
 	 */
 	public static boolean rectIntersectsRect(final double x, final double y, final double width, final double height, final double x2, final double y2, final double width2, final double height2) {
-		return ((x2 <= x && x2 + width2 > x) || (x2 <= x + width && x2 + width2 >= x + width)) && ((y2 <= y && y2 + height2 >= y) || (y2 <= y + height && y2 + height2 >= y + height));
+		double tw = width;
+        double th = height;
+        double rw = width2;
+        double rh = height2;
+        if (rw <= 0 || rh <= 0 || tw <= 0 || th <= 0) {
+            return false;
+        }
+        double tx = x;
+        double ty = y;
+        double rx = x2;
+        double ry = y2;
+        rw += rx;
+        rh += ry;
+        tw += tx;
+        th += ty;
+        //      overflow || intersect
+        return ((rw < rx || rw > tx) &&
+                (rh < ry || rh > ty) &&
+                (tw < tx || tw > rx) &&
+                (th < ty || th > ry));
 	}
 	
 	/**

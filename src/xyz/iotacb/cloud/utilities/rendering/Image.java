@@ -89,6 +89,7 @@ public class Image
      * @param h
      */
     public void draw(double x, double y, double w, double h) {
+    	if (!Render.canBeRendered(Render.display, x, y, w, h)) return;
     	if (pixels == null)
 			try {
 				throw new CloudInitializeException("ByteBuffer not initialized!");

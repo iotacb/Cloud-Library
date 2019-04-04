@@ -109,7 +109,7 @@ public class Display {
 	Timer fpsTimer;
 	
 	ArgumentHandler argumentHandler;
-
+	
 	/**
 	 * Create the display
 	 * 
@@ -235,6 +235,8 @@ public class Display {
 
 		inputHandler = new InputHandler(window);
 		fileHandler = new Files();
+		
+		Render.display = this;
 	}
 
 	/**

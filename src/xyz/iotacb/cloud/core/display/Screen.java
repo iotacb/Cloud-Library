@@ -70,6 +70,14 @@ public abstract class Screen {
 	}
 	
 	/**
+	 * Refresh the other entities list
+	 * @param entities
+	 */
+	public void updateOtherEntitiesList(final CloudList<Entity> entities) {
+		this.entities = entities;
+	}
+	
+	/**
 	 * Draw all button within the button list
 	 */
 	public void drawButtons() {

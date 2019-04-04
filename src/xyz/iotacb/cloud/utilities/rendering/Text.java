@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
 
+import xyz.iotacb.cloud.utilities.color.Colors;
 import xyz.iotacb.cloud.utilities.math.Vector;
 
 public class Text {
@@ -34,6 +35,7 @@ public class Text {
 	 * @param color
 	 */
 	public void drawText(final double x, final double y, final String text, Color color) {
+		if (!Render.canBeRendered(Render.display, x, y, getTextWidth() * 2, getTextHeight() * 2)) return;
 		if (color == null)
 			color = Color.white;
 		
@@ -66,7 +68,16 @@ public class Text {
 	public void drawText(final double x, final double y, final String text) {
 		drawText(x, y, text, null);
 	}
-
+	
+	/**
+	 * Draw the text at a location with white color
+	 * @param vector
+	 * @param text
+	 */
+	public void drawText(final Vector vector, final String text) {
+		drawText(vector.x, vector.y, text);
+	}
+	
 	/**
 	 * Draw the text at a location and set the text color
 	 * @param vector
@@ -76,14 +87,27 @@ public class Text {
 	public void drawText(final Vector vector, final String text, final Color color) {
 		drawText(vector.x, vector.y, text, color);
 	}
-
+	
 	/**
-	 * Draw the text at a location with white color
-	 * @param vector
+	 * Draw the text at a location with white color and black shadow
+	 * @param x
+	 * @param y
 	 * @param text
 	 */
-	public void drawText(final Vector vector, final String text) {
-		drawText(vector.x, vector.y, text);
+	public void drawTextWithShadow(final double x, final double y, final String text, final double shadowSpace, final Color shadowColor) {
+		drawText(x + shadowSpace, y + shadowSpace, text, shadowColor);
+		drawText(x, y, text, null);
+	}
+	
+	/**
+	 * Draw the text at a location with a shadow and set the text color
+	 * @param vector
+	 * @param text
+	 * @param color
+	 */
+	public void drawTextWithShadow(final Vector vector, final String text, final Color color, final double shadowSpace, final Color shadowColor) {
+		drawText(vector.x + shadowSpace, vector.y + shadowSpace, text, shadowColor);
+		drawText(vector.x, vector.y, text, color);
 	}
 
 	/**
