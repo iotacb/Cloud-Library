@@ -79,6 +79,14 @@ public class Random {
     }
 
     /**
+     * Generates a random boolean
+     * @return The random boolean
+     */
+    public static boolean randomBoolean() {
+        return new java.util.Random().nextBoolean();
+    }
+
+    /**
      * Will choose a random object from the given array and returns it
      * @param objects The object array
      * @return The chosen object

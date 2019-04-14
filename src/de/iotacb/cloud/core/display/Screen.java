@@ -1,6 +1,7 @@
 package de.iotacb.cloud.core.display;
 
 import de.iotacb.cloud.entity.Entity;
+import de.iotacb.cloud.utilities.render.Image;
 
 import java.util.ArrayList;
 
@@ -11,12 +12,14 @@ public abstract class Screen {
     public double displayWidth, displayHeight;
 
     public ArrayList<Entity> entities;
+    public ArrayList<Image> images;
 
     public Screen(final Display display) {
         this.display = display;
         displayWidth = display.displayWidth;
         displayHeight = display.displayHeight;
         this.entities = new ArrayList<>();
+        this.images = new ArrayList<>();
     }
 
     /**
@@ -46,6 +49,10 @@ public abstract class Screen {
      */
     public void drawAllEntities() {
         this.entities.forEach(Entity::draw);
+    }
+
+    public void reloadAllImages() {
+        this.images.forEach(Image::reload);
     }
 
     /**

@@ -1,5 +1,6 @@
 package de.iotacb.cloud.utilities.render;
 
+import de.iotacb.cloud.core.display.Display;
 import de.iotacb.cloud.core.exceptions.InitializeException;
 import de.iotacb.cloud.utilities.math.Vector;
 import de.iotacb.cloud.utilities.time.Timer;
@@ -28,15 +29,17 @@ public class Image {
 
     Timer frameDelay;
 
-    public Image(final String imagePath) {
+    public Image(final String imagePath, final Display display) {
         this.imagePath = imagePath;
+        display.currentScreen.images.add(this);
         initialize();
     }
 
-    public Image(final Image[] images, final boolean animated) {
+    public Image(final Image[] images, final boolean animated, final Display display) {
         this.images = images;
         this.animated = animated;
         this.frameDelay = new Timer();
+        display.currentScreen.images.add(this);
         initialize();
     }
 
@@ -64,9 +67,15 @@ public class Image {
         }
     }
 
+    /**
+     * Draw a image
+     * @param x The x location of the image
+     * @param y The y location of the image
+     * @param width The width of the image
+     * @param height The height of the image
+     */
     public void draw(double x, double y, double width, double height) {
         if (!Render.shouldBeRendered(x, y, width, height)) return;
-
         if (pixelBuffer == null) {
             try {
                 throw new InitializeException("Pixel buffer is not initialized!");
@@ -115,36 +124,83 @@ public class Image {
         Render.pop();
     }
 
+    /**
+     * Draw a image
+     * @param location The location of the image as a vector
+     * @param dimensions The dimensions of the image as a vector
+     */
     public void draw(final Vector location, final Vector dimensions) {
         draw(location.x, location.y, dimensions.x, dimensions.y);
     }
 
+    /**
+     * Draw a image with the dimensions of the image file
+     * @param x The x location of the image
+     * @param y The y location of the image
+     */
     public void draw(final double x, final double y) {
         draw(x, y, this.width, this.height);
     }
 
+    /**
+     * Draw a image with the dimensions of the image file
+     * @param location The location of the image as a vector
+     */
     public void draw(final Vector location) {
         draw(location.x, location.y, this.width, this.height);
     }
 
+    /**
+     * Draw a image from the image list
+     * @param x The x location of the image
+     * @param y The y location of the image
+     * @param width The width of the image
+     * @param height The height of the image
+     * @param imageIndex The index of the image in the image list
+     */
     public void draw(final double x, final double y, final double width, final double height, final int imageIndex) {
         if (this.images == null || this.images.length <= 0) return;
         this.images[imageIndex].draw(x, y, width, height);
     }
 
+    /**
+     * Draw a image from the image list
+     * @param location The location of the image as a vector
+     * @param dimensions The dimensions of the image as a vector
+     * @param imageIndex The index of the image in the image list
+     */
     public void draw(final Vector location, final Vector dimensions, final int imageIndex) {
         draw(location.x, location.y, dimensions.x, dimensions.y, imageIndex);
     }
 
+    /**
+     * Draw a image from the image list with the dimensions of the image file
+     * @param x The x location of the image
+     * @param y The y location of the image
+     * @param imageIndex The index of the image in the image list
+     */
     public void draw(final double x, final double y, final int imageIndex) {
         if (this.images == null || this.images.length <= 0) return;
         this.images[imageIndex].draw(x, y, this.width, this.height);
     }
 
+    /**
+     * Draw a image from the image list with the dimensions of the image file
+     * @param location The location of the image as a vector
+     * @param imageIndex The index of the image int the image list
+     */
     public void draw(final Vector location, final int imageIndex) {
         draw(location.x, location.y, imageIndex);
     }
 
+    /**
+     * Draw an animated image
+     * @param x The x location of the image
+     * @param y The y location of the image
+     * @param width The width of the image
+     * @param height The height of the image
+     * @param delay The delay between the frames in milliseconds
+     */
     public void drawAnimated(final double x, final double y, final double width, final double height, final long delay) {
         if (!this.animated || this.images == null || this.images.length <= 0) return;
         if (frameDelay.havePassed(delay)) {
@@ -157,16 +213,40 @@ public class Image {
         }
     }
 
+    /**
+     * Draw an animated image
+     * @param location The location of the image as a vector
+     * @param dimensions The dimensions of the image
+     * @param delay The delay between the frames in milliseconds
+     */
     public void drawAnimated(final Vector location, final Vector dimensions, final long delay) {
         drawAnimated(location.x, location.y, dimensions.x, dimensions.y, delay);
     }
 
+    /**
+     * Draw an animated image with the dimensions of the image file
+     * @param x The x location of the image
+     * @param y The y location of the image
+     * @param delay The delay between the frames in milliseconds
+     */
     public void drawAnimated(final double x, final double y, final long delay) {
         drawAnimated(x, y, this.width, this.height, delay);
     }
 
+    /**
+     * Draw an animated image with the dimensions of the image file
+     * @param location The location of the image as a vector
+     * @param delay The delay between the frame in milliseconds
+     */
     public void drawAnimated(final Vector location, final long delay) {
         drawAnimated(location.x, location.y, delay);
+    }
+
+    /**
+     * Reload the image
+     */
+    public void reload() {
+        initialize();
     }
 
 }

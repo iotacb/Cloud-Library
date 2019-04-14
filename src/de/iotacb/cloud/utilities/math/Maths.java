@@ -225,14 +225,25 @@ public class Maths {
     }
 
     /**
-     * Returns the linear interpolation of two input values by the given amount.
-     * @param value1 The first value
-     * @param value2 The second value
-     * @param interpolation The amount to interpolate
-     * @return The interpolated number
+     * The current value will approach the to value
+     * @param current The current value
+     * @param to The end value
+     * @param step The amount of increasing or decreasing
+     * @return The approached number
      */
-    public static double lerp(final double value1, final double value2, final double interpolation) {
-        return (value1 * (1.0 - interpolation)) + (value2 * interpolation);
+    public static double approach(double current, double to, final double step) {
+        if (current < to) {
+            current += step;
+            if (current > to) {
+                return to;
+            }
+        } else {
+            current -= step;
+            if (current < to) {
+                return to;
+            }
+        }
+        return current;
     }
 
     /**
@@ -247,6 +258,60 @@ public class Maths {
             average += value;
         }
         return (values.length > 0 ? average / values.length : average);
+    }
+
+    /**
+     * Will wave a value back and forth between two values over time
+     * @param from The start value
+     * @param to The end value
+     * @param duration The duration in seconds
+     * @param offset The time offset
+     * @return The waved value
+     */
+    public static double wave(final double from, final double to, final double duration, final double offset) {
+        double diff = (to - from) * 0.5;
+        return from + diff + Math.sin((((System.currentTimeMillis() * 0.001) + duration * offset) / duration) * TWO_PI) * diff;
+    }
+
+    /**
+     * Should the value be greater or lower than the min and max value, then the value will be wrapped around
+     * @param value The value that should be wrapped
+     * @param min The min value
+     * @param max The max value
+     * @return The wrapped value
+     */
+    public static double wrap(double value, final double min, final double max) {
+        if (value % 1 == 0) {
+            while (value > max || value < min) {
+                if (value > max) {
+                    value += min - max - 1;
+                } else if (value < min) {
+                    value += max - min + 1;
+                }
+            }
+            return value;
+        } else {
+            double oldValue = value + 1;
+            while (value != oldValue) {
+                oldValue = value;
+                if (value < min) {
+                    value = max - (min - value);
+                } else if (value > max) {
+                    value = min + (value - max);
+                }
+            }
+            return value;
+        }
+    }
+
+    /**
+     * Will return a specific amount of chance (0 - 1)
+     * @param chance The amount of chance
+     * @return If the chance is greater then the random generated number
+     */
+    public static boolean chance(double chance) {
+        chance = clamp(chance, 0, 1);
+        return (chance > Math.random());
     }
 
 }

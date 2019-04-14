@@ -12,15 +12,16 @@ public class InputHandler {
 
     long window;
 
-    public boolean hasGamepad;
+    public boolean hasGamepad, usingGamepad;
 
     public InputHandler(final long window) {
         this.window = window;
         this.keys = new boolean[GLFW_KEY_LAST];
+        this.hasGamepad = glfwGetJoystickName(GLFW_JOYSTICK_1) != null;
+        this.usingGamepad = hasGamepad;
         for (int i = 0; i < GLFW_KEY_LAST; i++) {
             keys[i] = false;
         }
-        this.hasGamepad = glfwGetJoystickName(GLFW_JOYSTICK_1) != null;
         if (hasGamepad) {
             this.buttons = new boolean[GLFW_GAMEPAD_BUTTON_LAST];
             for (int i = 0; i < GLFW_GAMEPAD_BUTTON_LAST; i++) {
@@ -71,7 +72,11 @@ public class InputHandler {
      * @return The pressed state of the mouse button
      */
     public boolean isMouseButtonDown(final int mouseButton) {
-        return glfwGetMouseButton(window, mouseButton) == 1;
+        boolean isPressed = glfwGetMouseButton(window, mouseButton) == 1;
+        if (hasGamepad) {
+            if (isPressed) usingGamepad = false;
+        }
+        return isPressed;
     }
 
     /**
@@ -80,7 +85,11 @@ public class InputHandler {
      * @return If the key had been pressed
      */
     public boolean isKeyPressed(final int keyCode) {
-        return (isKeyDown(keyCode) && !keys[keyCode]);
+        boolean isPressed = (isKeyDown(keyCode) && !keys[keyCode]);
+        if (hasGamepad) {
+            if (isPressed) usingGamepad = false;
+        }
+        return isPressed;
     }
 
     /**
@@ -89,7 +98,11 @@ public class InputHandler {
      * @return If the key had been released
      */
     public boolean isKeyReleased(final int keyCode) {
-        return (isKeyDown(keyCode) && keys[keyCode]);
+        boolean isReleased = (isKeyDown(keyCode) && keys[keyCode]);
+        if (hasGamepad) {
+            if (isReleased) usingGamepad = false;
+        }
+        return isReleased;
     }
 
     /**
@@ -129,7 +142,12 @@ public class InputHandler {
         this.hasGamepad = glfwGetJoystickName(GLFW_JOYSTICK_1) != null;
         for (int i = 0; i < GLFW_KEY_LAST; i++) {
             keys[i] = isKeyDown(i);
+            if (keys[i]) {
+                usingGamepad = false;
+            }
         }
+        isMouseButtonDown(0);
+        isMouseButtonDown(1);
         if (hasGamepad) {
             if (buttons == null) {
                 this.buttons = new boolean[GLFW_GAMEPAD_BUTTON_LAST];
@@ -139,7 +157,16 @@ public class InputHandler {
             }
             for (int i = 0; i < GLFW_GAMEPAD_BUTTON_LAST; i++) {
                 buttons[i] = isButtonDown(i);
+                if (buttons[i]) {
+                    usingGamepad = true;
+                }
             }
+            isLeftTriggerPressed();
+            isRightTriggerPressed();
+            getLeftJoystickX();
+            getLeftJoystickY();
+            getRightJoystickX();
+            getRightJoystickY();
         }
     }
 
@@ -152,6 +179,7 @@ public class InputHandler {
             return 0;
         FloatBuffer axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1);
         float a = axes.get(0);
+        if (Math.abs(a) > 0.5) usingGamepad = true;
         return a;
     }
 
@@ -164,6 +192,7 @@ public class InputHandler {
             return 0;
         FloatBuffer axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1);
         float a = axes.get(1);
+        if (Math.abs(a) > 0.5) usingGamepad = true;
         return a;
     }
 
@@ -176,6 +205,7 @@ public class InputHandler {
             return 0;
         FloatBuffer axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1);
         float a = axes.get(2);
+        if (Math.abs(a) > 0.5) usingGamepad = true;
         return a;
     }
 
@@ -188,6 +218,7 @@ public class InputHandler {
             return 0;
         FloatBuffer axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1);
         float a = axes.get(3);
+        if (Math.abs(a) > 0.5) usingGamepad = true;
         return a;
     }
 
@@ -222,7 +253,9 @@ public class InputHandler {
     public boolean isLeftTriggerPressed() {
         if (!hasGamepad)
             return false;
-        return getLeftTrigger() == 1;
+        boolean isPressed = getLeftTrigger() == 1;
+        if (isPressed) usingGamepad = true;
+        return isPressed;
     }
 
     /**
@@ -232,7 +265,9 @@ public class InputHandler {
     public boolean isRightTriggerPressed() {
         if (!hasGamepad)
             return false;
-        return getRightTrigger() == 1;
+        boolean isPressed = getRightTrigger() == 1;
+        if (isPressed) usingGamepad = true;
+        return isPressed;
     }
 
 }

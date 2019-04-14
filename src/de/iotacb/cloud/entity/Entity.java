@@ -8,7 +8,7 @@ import de.iotacb.cloud.utilities.peripherals.Keys;
 
 public abstract class Entity {
 
-    public double x, y, width, height;
+    public double x, y, width, height, joyStickThreshold;
     public int displayWidth, displayHeight;
     public long id;
 
@@ -19,6 +19,7 @@ public abstract class Entity {
         this.display.currentScreen.entities.add(this);
         this.displayWidth = display.displayWidth;
         this.displayHeight = display.displayHeight;
+        joyStickThreshold = 0.1;
         createID();
         initialize();
     }
@@ -176,4 +177,40 @@ public abstract class Entity {
         moveWithKeys(Keys.UP, Keys.LEFT, Keys.DOWN, Keys.RIGHT, speed);
     }
 
+    /**
+     * Move the entity with a game pad
+     * @param speed The moving speed of the entity
+     * @param moveStick Left or right joystick (0 = Left, 1 = Right)
+     */
+    public void moveWithGamepad(final double speed, final int moveStick) {
+        double stickX = (moveStick == 0 ? display.inputHandler.getLeftJoystickX() : display.inputHandler.getRightJoystickX());
+        double stickY = (moveStick == 0 ? display.inputHandler.getLeftJoystickY() : display.inputHandler.getRightJoystickY());
+
+        if (Math.abs(stickX) > joyStickThreshold) {
+            if (stickX > 0) {
+                x += (speed * Math.abs(stickX)) * display.deltaTime;
+            }
+            if (stickX < 0) {
+                x -= (speed * Math.abs(stickX)) * display.deltaTime;
+            }
+        }
+        if (Math.abs(stickY) > joyStickThreshold) {
+            if (stickY > 0) {
+                y += (speed * Math.abs(stickY)) * display.deltaTime;
+            }
+            if (stickY < 0) {
+                y -= (speed * Math.abs(stickY)) * display.deltaTime;
+            }
+        }
+    }
+
+    /**
+     * Let the jump a specific distance into the wanted direction
+     * @param distance The distance to jump
+     * @param direction The direction
+     */
+    public void jumpDirection(final double distance, final double direction) {
+        x += Maths.lengthDirX(distance, direction);
+        y += Maths.lengthDirY(distance, direction);
+    }
 }

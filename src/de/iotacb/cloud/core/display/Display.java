@@ -2,6 +2,8 @@ package de.iotacb.cloud.core.display;
 
 import de.iotacb.cloud.core.display.input.InputHandler;
 import de.iotacb.cloud.core.exceptions.InitializeException;
+import de.iotacb.cloud.utilities.math.Maths;
+import de.iotacb.cloud.utilities.math.Vector;
 import de.iotacb.cloud.utilities.render.Render;
 import de.iotacb.cloud.utilities.time.Timer;
 import org.lwjgl.BufferUtils;
@@ -27,10 +29,10 @@ public class Display {
 
     public InputHandler inputHandler;
 
-    boolean windowResizeable, windowFullscreen;
+    public boolean windowResizeable, windowFullscreen;
 
-    double lastTime, diffTime;
-    long mainMonitor, windowID, frameCounter;
+    private double lastTime, diffTime;
+    private long mainMonitor, windowID, frameCounter;
 
     GLFWFramebufferSizeCallback framebufferSizeCallback;
     GLFWWindowSizeCallback windowSizeCallback;
@@ -50,6 +52,19 @@ public class Display {
         }
     }
 
+    public Display(final Vector dimensions, final String windowTitle, final boolean windowResizeable, final boolean windowFullscreen) {
+        this.displayWidth = dimensions.getXInt();
+        this.displayHeight = dimensions.getYInt();
+        this.windowTitle = windowTitle;
+        this.windowResizeable = windowResizeable;
+        this.windowFullscreen = windowFullscreen;
+        try {
+            initialize();
+        } catch (InitializeException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initialize() throws InitializeException {
         if (!glfwInit()) throw new InitializeException("Unable to initialize GLFW.");
         setWindowHints();
@@ -58,7 +73,7 @@ public class Display {
         inputHandler = new InputHandler(windowID);
         frameTimer = new Timer();
         Render.display = this;
-        deltaTime = 0;
+        deltaTime = System.currentTimeMillis();
     }
 
     private void setWindowHints() {
@@ -136,7 +151,7 @@ public class Display {
         long time = System.nanoTime();
         diffTime = ((time - lastTime) / 1000000);
         lastTime = time;
-        deltaTime = (diffTime / 10);
+        deltaTime = Maths.clamp(diffTime / 10, 0.0001, Double.MAX_VALUE);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
