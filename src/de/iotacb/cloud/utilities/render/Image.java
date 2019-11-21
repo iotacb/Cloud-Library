@@ -1,252 +1,257 @@
 package de.iotacb.cloud.utilities.render;
 
-import de.iotacb.cloud.core.display.Display;
-import de.iotacb.cloud.core.exceptions.InitializeException;
-import de.iotacb.cloud.utilities.math.Vector;
-import de.iotacb.cloud.utilities.time.Timer;
-import org.lwjgl.BufferUtils;
-
-import javax.imageio.ImageIO;
-
 import static org.lwjgl.opengl.GL11.*;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import javax.imageio.ImageIO;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL30;
+
+import de.iotacb.cloud.core.window.Window;
+import de.iotacb.cloud.utilities.math.Vector;
+import de.iotacb.cloud.utilities.time.Timer;
+
 public class Image {
 
-    public String imagePath;
-    public Image[] images;
+	public File imageFile;
 
-    int imageID, imageIndex, width, height;
+	public Image[] images;
 
-    ByteBuffer pixelBuffer;
+	int imageWidth, imageHeight, imageId, imageIndex;
 
-    boolean animated;
+	ByteBuffer pixelBuffer;
 
-    Timer frameDelay;
+	Window window;
 
-    public Image(final String imagePath, final Display display) {
-        this.imagePath = imagePath;
-        display.currentScreen.images.add(this);
-        initialize();
-    }
+	Timer animationTimer;
 
-    public Image(final Image[] images, final boolean animated, final Display display) {
-        this.images = images;
-        this.animated = animated;
-        this.frameDelay = new Timer();
-        display.currentScreen.images.add(this);
-        initialize();
-    }
+	public boolean finishedLoading = false;
 
-    private void initialize() {
-        try {
-            this.imageID = glGenTextures();
-            BufferedImage image = ImageIO.read(new File(imagePath));
-            this.width = image.getWidth();
-            this.height = image.getHeight();
+	public Image(Window window, String imagePath) {
+		this.window = window;
+		this.imageFile = new File(imagePath);
+		try {
+			initialize();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-            int[] pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-            pixelBuffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
+	public Image(Window window, File file) {
+		this.window = window;
+		this.imageFile = file;
+		try {
+			initialize();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-            for (int i = 0; i < pixels.length; i++) {
-                int pixel = pixels[i];
-                pixelBuffer.put((byte) (pixel >> 16 & 0xFF)); // Red color channel
-                pixelBuffer.put((byte) (pixel >> 8 & 0xFF)); // Green color channel
-                pixelBuffer.put((byte) (pixel & 0xFF)); // Blue color channel;
-                pixelBuffer.put((byte) (pixel >> 24 & 0xFF)); // Alpha color channel;
-            }
+	public Image(Window window, Image[] images) {
+		this.window = window;
+		this.images = images;
+		this.imageIndex = 0;
+		try {
+			initialize();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-            pixelBuffer.flip();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	private void initialize() throws IOException {
+		this.animationTimer = new Timer();
 
-    /**
-     * Draw a image
-     * @param x The x location of the image
-     * @param y The y location of the image
-     * @param width The width of the image
-     * @param height The height of the image
-     */
-    public void draw(double x, double y, double width, double height) {
-        if (!Render.shouldBeRendered(x, y, width, height)) return;
-        if (pixelBuffer == null) {
-            try {
-                throw new InitializeException("Pixel buffer is not initialized!");
-            } catch (InitializeException e) {
-                e.printStackTrace();
-            }
-        }
+		this.imageId = glGenTextures();
 
-        width /= 2;
-        height /= 2;
+		if (this.imageFile == null && this.images.length > 0) {
+			this.imageFile = this.images[0].imageFile;
+		}
 
-        Render.push();
-        Render.color(Color.white); // Reset rendering color
+		BufferedImage image = ImageIO.read(this.imageFile);
 
-        Render.enable(GL_TEXTURE_2D);
-        Render.enable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        Render.disable(GL_LIGHTING);
-        glBindTexture(GL_TEXTURE_2D, imageID);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer);
+		this.imageWidth = image.getWidth();
+		this.imageHeight = image.getHeight();
 
-        double wDiff = Math.abs(this.width - width);
-        double hDiff = Math.abs(this.height - height);
+		int[] imagePixels = image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+		this.pixelBuffer = BufferUtils.createByteBuffer(3 * 1024 * 1024);
 
-        x += (this.width - wDiff);
-        y += (this.height - hDiff);
+		for (int i = 0; i < imagePixels.length; i++) {
+			int pixel = imagePixels[i];
+			this.pixelBuffer.put((byte) (pixel >> 16 & 0xFF)); // red
+			this.pixelBuffer.put((byte) (pixel >> 8 & 0xFF)); // green
+			this.pixelBuffer.put((byte) (pixel & 0xFF)); // blue
+			this.pixelBuffer.put((byte) (pixel >> 24 & 0xFF)); // alpha
+		}
 
-        Render.begin(GL_QUADS);
-        {
-            glTexCoord2d(0, 1);
-            Render.vertex(x - width, y + height);
-            glTexCoord2d(1, 1);
-            Render.vertex(x + width, y + height);
-            glTexCoord2d(1, 0);
-            Render.vertex(x + width, y - height);
-            glTexCoord2d(0, 0);
-            Render.vertex(x - width, y - height);
-        }
-        Render.end();
-        Render.enable(GL_LIGHTING);
-        Render.disable(GL_BLEND);
-        Render.disable(GL_TEXTURE_2D);
+		this.pixelBuffer.flip();
 
-        Render.pop();
-    }
+		this.finishedLoading = true;
+	}
 
-    /**
-     * Draw a image
-     * @param location The location of the image as a vector
-     * @param dimensions The dimensions of the image as a vector
-     */
-    public void draw(final Vector location, final Vector dimensions) {
-        draw(location.x, location.y, dimensions.x, dimensions.y);
-    }
+	public void drawImage(int x, int y, int width, int height) {
+		if (this.pixelBuffer == null) {
+			try {
+				throw new Exception("Pixel buffer of image is empty. Error: #004");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
-    /**
-     * Draw a image with the dimensions of the image file
-     * @param x The x location of the image
-     * @param y The y location of the image
-     */
-    public void draw(final double x, final double y) {
-        draw(x, y, this.width, this.height);
-    }
+		width /= 2;
+		height /= 2;
 
-    /**
-     * Draw a image with the dimensions of the image file
-     * @param location The location of the image as a vector
-     */
-    public void draw(final Vector location) {
-        draw(location.x, location.y, this.width, this.height);
-    }
+		Render.push();
 
-    /**
-     * Draw a image from the image list
-     * @param x The x location of the image
-     * @param y The y location of the image
-     * @param width The width of the image
-     * @param height The height of the image
-     * @param imageIndex The index of the image in the image list
-     */
-    public void draw(final double x, final double y, final double width, final double height, final int imageIndex) {
-        if (this.images == null || this.images.length <= 0) return;
-        this.images[imageIndex].draw(x, y, width, height);
-    }
+		Render.color(Color.white);
 
-    /**
-     * Draw a image from the image list
-     * @param location The location of the image as a vector
-     * @param dimensions The dimensions of the image as a vector
-     * @param imageIndex The index of the image in the image list
-     */
-    public void draw(final Vector location, final Vector dimensions, final int imageIndex) {
-        draw(location.x, location.y, dimensions.x, dimensions.y, imageIndex);
-    }
+		Render.enable(GL_TEXTURE_2D);
+		Render.enable(GL_BLEND);
+		Render.disable(GL_LIGHTING);
+		glBindTexture(GL_TEXTURE_2D, this.imageId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this.imageWidth, this.imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+				this.pixelBuffer);
 
-    /**
-     * Draw a image from the image list with the dimensions of the image file
-     * @param x The x location of the image
-     * @param y The y location of the image
-     * @param imageIndex The index of the image in the image list
-     */
-    public void draw(final double x, final double y, final int imageIndex) {
-        if (this.images == null || this.images.length <= 0) return;
-        this.images[imageIndex].draw(x, y, this.width, this.height);
-    }
+		int diffW = Math.abs(this.imageWidth - width);
+		int diffH = Math.abs(this.imageHeight - height);
+		x += (this.imageWidth - diffW);
+		y += (this.imageHeight - diffH);
 
-    /**
-     * Draw a image from the image list with the dimensions of the image file
-     * @param location The location of the image as a vector
-     * @param imageIndex The index of the image int the image list
-     */
-    public void draw(final Vector location, final int imageIndex) {
-        draw(location.x, location.y, imageIndex);
-    }
+		Render.begin(GL_QUADS);
+		{
+			glTexCoord2d(0, 1);
+			Render.vertex(x - width, y + height);
+			glTexCoord2d(1, 1);
+			Render.vertex(x + width, y + height);
+			glTexCoord2d(1, 0);
+			Render.vertex(x + width, y - height);
+			glTexCoord2d(0, 0);
+			Render.vertex(x - width, y - height);
+		}
+		Render.end();
+		
+		GL30.glGenerateMipmap(imageId);
+		
+		Render.enable(GL_LIGHTING);
+		Render.disable(GL_BLEND);
+		Render.disable(GL_TEXTURE_2D);
 
-    /**
-     * Draw an animated image
-     * @param x The x location of the image
-     * @param y The y location of the image
-     * @param width The width of the image
-     * @param height The height of the image
-     * @param delay The delay between the frames in milliseconds
-     */
-    public void drawAnimated(final double x, final double y, final double width, final double height, final long delay) {
-        if (!this.animated || this.images == null || this.images.length <= 0) return;
-        if (frameDelay.havePassed(delay)) {
-            if (this.imageIndex < this.images.length - 1) {
-                this.imageIndex++;
-            } else {
-                this.imageIndex = 0;
-            }
-            draw(x, y, width, height, this.imageIndex);
-        }
-    }
+		Render.pop();
+	}
 
-    /**
-     * Draw an animated image
-     * @param location The location of the image as a vector
-     * @param dimensions The dimensions of the image
-     * @param delay The delay between the frames in milliseconds
-     */
-    public void drawAnimated(final Vector location, final Vector dimensions, final long delay) {
-        drawAnimated(location.x, location.y, dimensions.x, dimensions.y, delay);
-    }
+	public void drawImage(Vector location, Vector size) {
+		drawImage((int) location.x, (int) location.y, (int) size.x, (int) size.y);
+	}
 
-    /**
-     * Draw an animated image with the dimensions of the image file
-     * @param x The x location of the image
-     * @param y The y location of the image
-     * @param delay The delay between the frames in milliseconds
-     */
-    public void drawAnimated(final double x, final double y, final long delay) {
-        drawAnimated(x, y, this.width, this.height, delay);
-    }
+	public void drawImage(Vector location, int width, int height) {
+		drawImage((int) location.x, (int) location.y, width, height);
+	}
 
-    /**
-     * Draw an animated image with the dimensions of the image file
-     * @param location The location of the image as a vector
-     * @param delay The delay between the frame in milliseconds
-     */
-    public void drawAnimated(final Vector location, final long delay) {
-        drawAnimated(location.x, location.y, delay);
-    }
+	public void drawImage(int x, int y, Vector size) {
+		drawImage(x, y, (int) size.x, (int) size.y);
+	}
 
-    /**
-     * Reload the image
-     */
-    public void reload() {
-        initialize();
-    }
+	public void drawImage(int x, int y) {
+		drawImage(x, y, this.imageWidth, this.imageHeight);
+	}
 
+	public void drawImage(Vector location) {
+		drawImage((int) location.x, (int) location.y, this.imageWidth, this.imageHeight);
+	}
+
+	public void drawImageIndex(int x, int y, int width, int height, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImage(x, y, width, height);
+	}
+
+	public void drawImageIndex(Vector location, Vector size, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImage(location, size);
+	}
+
+	public void drawImageIndex(Vector location, int width, int height, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImage(location, width, height);
+	}
+
+	public void drawImageIndex(int x, int y, Vector size, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImage(x, y, size);
+	}
+
+	public void drawImageIndex(int x, int y, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		drawImageIndex(x, y, this.images[index].imageWidth, this.images[index].imageHeight, index);
+	}
+
+	public void drawImageIndex(Vector location, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		drawImageIndex((int) location.x, (int) location.y, index);
+	}
+
+	public void drawImageAnimated(int x, int y, int width, int height, int frameDelay) {
+		if (this.images.length <= 0 || this.images == null) {
+			return;
+		}
+
+		if (this.animationTimer.havePassed(frameDelay)) {
+			if (this.imageIndex < this.images.length - 1) {
+				this.imageIndex++;
+			} else {
+				this.imageIndex = 0;
+			}
+		}
+		drawImageIndex(x, y, width, height, this.imageIndex);
+	}
+
+	public void drawImageAnimated(Vector location, Vector size, int frameDelay) {
+		drawImageAnimated((int) location.x, (int) location.y, (int) size.x, (int) size.y, frameDelay);
+	}
+
+	public void drawImageAnimated(Vector location, int width, int height, int frameDelay) {
+		drawImageAnimated((int) location.x, (int) location.y, width, height, frameDelay);
+	}
+
+	public void drawImageAnimated(int x, int y, Vector size, int frameDelay) {
+		drawImageAnimated(x, y, (int) size.x, (int) size.y, frameDelay);
+	}
+
+	public void drawImageAnimated(int x, int y, int frameDelay) {
+		drawImageAnimated(x, y, this.images[this.imageIndex].imageWidth, this.images[this.imageIndex].imageHeight, frameDelay);
+	}
+
+	public void drawImageAnimated(Vector location, int frameDelay) {
+		drawImageAnimated((int) location.x, (int) location.y, frameDelay);
+	}
+
+	public void reloadImage() {
+		try {
+			this.finishedLoading = false;
+			initialize();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
