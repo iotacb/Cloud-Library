@@ -1,13 +1,17 @@
 # What is Cloud?
-Cloud is a simple Java 2D game library. It is just a little fun project for myself, and I created it because I wanted to make a little game in Java. So I wanted to make one using LWJGL, but I find it to complicated and confusing for just some small and simple games. I tried to make Cloud very user friendly and not to complicated to understand.
+Cloud is a game creation library written in Java based on LWJGL.
+LWJGL is the foundation of the Cloud, Cloud is written ontop of it.
+Cloud is not made for professional usage, it's made for Java beginners that want to create a little game.
+
 
 # What libraries are used?
-- [LWJGL]() for the main structure of the library
-- [JACo]() for playing audio files, I'll replace it with a self made one later.
+- [LWJGL](https://lwjgl.com/) the foundation of the library
+- [PI4J](https://pi4j.com/) for usage on a RaspberryPi
 
 # What is possible with Cloud?
-As I said, Cloud is just a fun project so you shouldn't use it if you want to make a big and extensive game.
-I made some little demo games, go watch them [here](https://github.com/iotacb/Cloud-Library/tree/master/demos).
+As I said, Cloud is just made for little projects.
+But you can create for example a little 2D shooter or something else in a little amount of time.
 
 # How to start?
-If you want to start with Cloud, click [here](https://github.com/iotacb/Cloud-Library/blob/master/tutorials/Installation/cloud-installation.md) to get to the installation site.
+To start using Cloud, download the source code of it and add it to your project. That way, you can change stuff of Cloud on the fly. So if theres something bothers you, you can change it how you want it to be.
+The next steps will be explained in the [tutorial projects](). (Will be added soon!)
