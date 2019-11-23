@@ -11,6 +11,7 @@ import de.iotacb.cloud.utilities.input.Keys;
 import de.iotacb.cloud.utilities.render.Text;
 import de.iotacb.homepi.screens.gui.buttons.Button;
 import de.iotacb.homepi.screens.gui.inputs.Input;
+import de.iotacb.homepi.screens.gui.particles.ParticleGenerator;
 
 public class ShoppingScreen extends World {
 	
@@ -24,6 +25,8 @@ public class ShoppingScreen extends World {
 	
 	int sendBtnOffsetter = 20;
 	
+	ParticleGenerator gen;
+	
 	public ShoppingScreen(Window window) {
 		super(window);
 	}
@@ -35,6 +38,8 @@ public class ShoppingScreen extends World {
 		this.input = new Input(window, 100, 200, "zum Beispiel: Brot");
 		this.send = new SendButton(window, 100, 280 + (items.size() * sendBtnOffsetter), items);
 		
+		this.gen = new ParticleGenerator(window);
+		
 		addEntity(new BackButton(window, 20, 20, null));
 		addEntity(send);
 		addEntity(input);
@@ -42,6 +47,7 @@ public class ShoppingScreen extends World {
 
 	@Override
 	public void update() {
+		gen.update();
 		updateEntities();
 		
 		if (window.inputHandler.isKeyPressed(Keys.ENTER)) {
@@ -63,6 +69,7 @@ public class ShoppingScreen extends World {
 
 	@Override
 	public void draw() {
+		gen.draw();
 		drawEntities();
 		
 		text.drawText(100, 250, "Liste: 	Items: " + items.size() + (items.size() == 15 ? " Minuten" : ""), Color.white);

@@ -6,7 +6,7 @@ import java.awt.Color;
 
 import de.iotacb.cloud.core.window.Window;
 import de.iotacb.cloud.utilities.math.Maths;
-import de.iotacb.cloud.utilities.math.Vector;
+import de.iotacb.cloud.utilities.math.vector.VectorI;
 
 public class Render {
 	
@@ -45,6 +45,20 @@ public class Render {
         pop();
     }
     
+    public static void startSmooth() {
+    	enable(GL_POLYGON_SMOOTH);
+    	enable(GL_LINE_SMOOTH);
+    	enable(GL_POINT_SMOOTH);
+    	enable(GL_SMOOTH);
+    }
+    
+    public static void endSmooth() {
+    	disable(GL_SMOOTH);
+    	disable(GL_POINT_SMOOTH);
+    	disable(GL_LINE_SMOOTH);
+    	disable(GL_POLYGON_SMOOTH);
+    }
+    
     public static void begin(int glMode) {
     	glBegin(glMode);
     }
@@ -57,7 +71,7 @@ public class Render {
         glVertex2d(x, y);
     }
     
-    public static void vertex(Vector location) {
+    public static void vertex(VectorI location) {
         vertex(location.x, location.y);
     }
     
@@ -65,7 +79,7 @@ public class Render {
         glTranslated(x, y, 0);
     }
     
-    public static void translate(Vector location) {
+    public static void translate(VectorI location) {
         translate(location.x, location.y);
     }
     
@@ -73,7 +87,7 @@ public class Render {
         glScaled(x, y, 0);
     }
     
-    public static void scale(Vector scaling) {
+    public static void scale(VectorI scaling) {
         scale(scaling.x, scaling.y);
     }
     
@@ -81,7 +95,7 @@ public class Render {
         glRotated(angle, x, y, z);
     }
     
-    public static void rotate(Vector axis, double angle) {
+    public static void rotate(VectorI axis, double angle) {
         rotate(axis.x, axis.y, axis.z, angle);
     }
     
@@ -118,15 +132,15 @@ public class Render {
     	stop();
     }
     
-    public static void rect(Vector location, Vector size, boolean filled, Color color) {
+    public static void rect(VectorI location, VectorI size, boolean filled, Color color) {
     	rect((int)location.x, (int)location.y, (int)size.x, (int)size.y, filled, color);
     }
     
-    public static void rect(int x, int y, Vector size, boolean filled, Color color) {
+    public static void rect(int x, int y, VectorI size, boolean filled, Color color) {
     	rect(x, y, (int)size.x, (int)size.y, filled, color);
     }
     
-    public static void rect(Vector location, int width, int height, boolean filled, Color color) {
+    public static void rect(VectorI location, int width, int height, boolean filled, Color color) {
     	rect((int)location.x, (int)location.y, width, height, filled, color);
     }
     
@@ -134,15 +148,15 @@ public class Render {
     	rect(x, y, width, height, filled, null);
     }
     
-    public static void rect(Vector location, Vector size, boolean filled) {
+    public static void rect(VectorI location, VectorI size, boolean filled) {
     	rect(location, size, filled, null);
     }
     
-    public static void rect(int x, int y, Vector size, boolean filled) {
+    public static void rect(int x, int y, VectorI size, boolean filled) {
     	rect(x, y, (int)size.x, (int)size.y, filled);
     }
     
-    public static void rect(Vector location, int width, int height, boolean filled) {
+    public static void rect(VectorI location, int width, int height, boolean filled) {
     	rect((int)location.x, (int)location.y, width, height, filled);
     }
     
@@ -150,15 +164,15 @@ public class Render {
     	rect(x, y, width, height, true, color);
     }
     
-    public static void rect(Vector location, Vector size, Color color) {
+    public static void rect(VectorI location, VectorI size, Color color) {
     	rect(location, size, true, color);
     }
     
-    public static void rect(int x, int y, Vector size, Color color) {
+    public static void rect(int x, int y, VectorI size, Color color) {
     	rect(x, y, (int)size.x, (int)size.y, color);
     }
     
-    public static void rect(Vector location, int width, int height, Color color) {
+    public static void rect(VectorI location, int width, int height, Color color) {
     	rect((int)location.x, (int)location.y, width, height, color);
     }
     
@@ -166,15 +180,15 @@ public class Render {
     	rect(x, y, width, height, true, null);
     }
     
-    public static void rect(Vector location, Vector size) {
+    public static void rect(VectorI location, VectorI size) {
     	rect(location, size, true, null);
     }
     
-    public static void rect(int x, int y, Vector size) {
+    public static void rect(int x, int y, VectorI size) {
     	rect(x, y, (int)size.x, (int)size.y);
     }
     
-    public static void rect(Vector location, int width, int height) {
+    public static void rect(VectorI location, int width, int height) {
     	rect((int)location.x, (int)location.y, width, height);
     }
     
@@ -184,17 +198,17 @@ public class Render {
     	rect(x, y, width, height, filled, color);
     }
     
-    public static void rectCentered(Vector location, Vector size, boolean filled, Color color) {
+    public static void rectCentered(VectorI location, VectorI size, boolean filled, Color color) {
     	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), (int)size.x, (int)size.y, filled, color);
     }
     
-    public static void rectCentered(int x, int y, Vector size, boolean filled, Color color) {
+    public static void rectCentered(int x, int y, VectorI size, boolean filled, Color color) {
     	x -= size.x / 2;
     	y -= size.y / 2;
     	rect(x, y, (int)size.x, (int)size.y, filled, color);
     }
     
-    public static void rectCentered(Vector location, int width, int height, boolean filled, Color color) {
+    public static void rectCentered(VectorI location, int width, int height, boolean filled, Color color) {
     	rect((int)(location.x - width / 2), (int)(location.y - height / 2), width, height, filled, color);
     }
     
@@ -204,17 +218,17 @@ public class Render {
     	rect(x, y, width, height, filled, null);
     }
     
-    public static void rectCentered(Vector location, Vector size, boolean filled) {
+    public static void rectCentered(VectorI location, VectorI size, boolean filled) {
     	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), size, filled, null);
     }
     
-    public static void rectCentered(int x, int y, Vector size, boolean filled) {
+    public static void rectCentered(int x, int y, VectorI size, boolean filled) {
     	x -= size.x / 2;
     	y -= size.y / 2;
     	rect(x, y, (int)size.x, (int)size.y, filled);
     }
     
-    public static void rectCentered(Vector location, int width, int height, boolean filled) {
+    public static void rectCentered(VectorI location, int width, int height, boolean filled) {
     	rect((int)location.x - width / 2, (int)location.y - height / 2, width, height, filled);
     }
     
@@ -224,17 +238,17 @@ public class Render {
     	rect(x, y, width, height, true, color);
     }
     
-    public static void rectCentered(Vector location, Vector size, Color color) {
+    public static void rectCentered(VectorI location, VectorI size, Color color) {
     	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), size, true, color);
     }
     
-    public static void rectCentered(int x, int y, Vector size, Color color) {
+    public static void rectCentered(int x, int y, VectorI size, Color color) {
     	x -= size.x / 2;
     	y -= size.y / 2;
     	rect(x, y, (int)size.x, (int)size.y, color);
     }
     
-    public static void rectCentered(Vector location, int width, int height, Color color) {
+    public static void rectCentered(VectorI location, int width, int height, Color color) {
     	rect((int)location.x - width / 2, (int)location.y - height / 2, width, height, color);
     }
     
@@ -244,17 +258,17 @@ public class Render {
     	rect(x, y, width, height, true, null);
     }
     
-    public static void rectCentered(Vector location, Vector size) {
+    public static void rectCentered(VectorI location, VectorI size) {
     	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), size, true, null);
     }
     
-    public static void rectCentered(int x, int y, Vector size) {
+    public static void rectCentered(int x, int y, VectorI size) {
     	x -= size.x / 2;
     	y -= size.y / 2;
     	rect(x, y, (int)size.x, (int)size.y);
     }
     
-    public static void rectCentered(Vector location, int width, int height) {
+    public static void rectCentered(VectorI location, int width, int height) {
     	rect((int)location.x - width / 2, (int)location.y - height / 2, width, height);
     }
     
@@ -274,7 +288,7 @@ public class Render {
     	stop();
     }
     
-    public static void polygon(Vector location, int sideLength, int amountOfSides, boolean filled, Color color) {
+    public static void polygon(VectorI location, int sideLength, int amountOfSides, boolean filled, Color color) {
     	polygon((int)location.x, (int)location.y, sideLength, amountOfSides, filled, color);
     }
     
@@ -282,7 +296,7 @@ public class Render {
     	polygon(x, y, sideLength, amountOfSides, filled, null);
     }
     
-    public static void polygon(Vector location, int sideLength, int amountOfSides, boolean filled) {
+    public static void polygon(VectorI location, int sideLength, int amountOfSides, boolean filled) {
     	polygon(location, sideLength, amountOfSides, filled, null);
     }
     
@@ -290,7 +304,7 @@ public class Render {
     	polygon(x, y, sideLength, amountOfSides, true, color);
     }
     
-    public static void polygon(Vector location, int sideLength, int amountOfSides, Color color) {
+    public static void polygon(VectorI location, int sideLength, int amountOfSides, Color color) {
     	polygon(location, sideLength, amountOfSides, true, color);
     }
     
@@ -298,7 +312,7 @@ public class Render {
     	polygon(x, y, sideLength, amountOfSides, true, null);
     }
     
-    public static void polygon(Vector location, int sideLength, int amountOfSides) {
+    public static void polygon(VectorI location, int sideLength, int amountOfSides) {
     	polygon(location, sideLength, amountOfSides, true, null);
     }
     
@@ -308,7 +322,7 @@ public class Render {
     	polygon(x, y, sideLength, amountOfSides, filled, color);
     }
     
-    public static void polygonCentered(Vector location, int sideLength, int amountOfSides, boolean filled, Color color) {
+    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides, boolean filled, Color color) {
     	polygon((int)location.x - sideLength / 2, (int)location.y - sideLength / 2, sideLength, amountOfSides, filled, color);
     }
     
@@ -318,7 +332,7 @@ public class Render {
     	polygon(x, y, sideLength, amountOfSides, filled, null);
     }
     
-    public static void polygonCentered(Vector location, int sideLength, int amountOfSides, boolean filled) {
+    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides, boolean filled) {
     	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, amountOfSides, filled, null);
     }
     
@@ -328,7 +342,7 @@ public class Render {
     	polygon(x, y, sideLength, amountOfSides, true, color);
     }
     
-    public static void polygonCentered(Vector location, int sideLength, int amountOfSides, Color color) {
+    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides, Color color) {
     	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, amountOfSides, true, color);
     }
     
@@ -338,7 +352,7 @@ public class Render {
     	polygon(x, y, sideLength, amountOfSides, true, null);
     }
     
-    public static void polygonCentered(Vector location, int sideLength, int amountOfSides) {
+    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides) {
     	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, amountOfSides, true, null);
     }
     
@@ -346,7 +360,7 @@ public class Render {
     	polygon(x, y, radius, 360, filled, color);
     }
     
-    public static void circle(Vector location, int radius, boolean filled, Color color) {
+    public static void circle(VectorI location, int radius, boolean filled, Color color) {
     	polygon(location, radius, 360, filled, color);
     }
     
@@ -354,7 +368,7 @@ public class Render {
     	polygon(x, y, radius, 360, filled);
     }
     
-    public static void circle(Vector location, int radius, boolean filled) {
+    public static void circle(VectorI location, int radius, boolean filled) {
     	polygon(location, radius, 360, filled);
     }
     
@@ -362,7 +376,7 @@ public class Render {
     	polygon(x, y, radius, 360, color);
     }
     
-    public static void circle(Vector location, int radius, Color color) {
+    public static void circle(VectorI location, int radius, Color color) {
     	polygon(location, radius, 360, color);
     }
     
@@ -370,7 +384,7 @@ public class Render {
     	polygon(x, y, radius, 360);
     }
     
-    public static void circle(Vector location, int radius) {
+    public static void circle(VectorI location, int radius) {
     	polygon(location, radius, 360);
     }
     
@@ -380,7 +394,7 @@ public class Render {
     	polygon(x, y, radius, 360, filled, color);
     }
     
-    public static void circleCentered(Vector location, int radius, boolean filled, Color color) {
+    public static void circleCentered(VectorI location, int radius, boolean filled, Color color) {
     	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360, filled, color);
     }
     
@@ -390,7 +404,7 @@ public class Render {
     	polygon(x, y, radius, 360, filled);
     }
     
-    public static void circleCentered(Vector location, int radius, boolean filled) {
+    public static void circleCentered(VectorI location, int radius, boolean filled) {
     	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360, filled);
     }
     
@@ -400,7 +414,7 @@ public class Render {
     	polygon(x, y, radius, 360, color);
     }
     
-    public static void circleCentered(Vector location, int radius, Color color) {
+    public static void circleCentered(VectorI location, int radius, Color color) {
     	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360, color);
     }
     
@@ -410,7 +424,7 @@ public class Render {
     	polygon(x, y, radius, 360);
     }
     
-    public static void circleCentered(Vector location, int radius) {
+    public static void circleCentered(VectorI location, int radius) {
     	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360);
     }
     
@@ -418,7 +432,7 @@ public class Render {
     	polygon(x, y, sideLength, 3, filled, color);
     }
     
-    public static void triangle(Vector location, int sideLength, boolean filled, Color color) {
+    public static void triangle(VectorI location, int sideLength, boolean filled, Color color) {
     	polygon(location, sideLength, 3, filled, color);
     }
     
@@ -426,7 +440,7 @@ public class Render {
     	polygon(x, y, sideLength, 3, filled);
     }
     
-    public static void triangle(Vector location, int sideLength, boolean filled) {
+    public static void triangle(VectorI location, int sideLength, boolean filled) {
     	polygon(location, sideLength, 3, filled);
     }
     
@@ -434,7 +448,7 @@ public class Render {
     	polygon(x, y, sideLength, 3, color);
     }
     
-    public static void triangle(Vector location, int sideLength, Color color) {
+    public static void triangle(VectorI location, int sideLength, Color color) {
     	polygon(location, sideLength, 3, color);
     }
     
@@ -442,7 +456,7 @@ public class Render {
     	polygon(x, y, sideLength, 3);
     }
     
-    public static void triangle(Vector location, int sideLength) {
+    public static void triangle(VectorI location, int sideLength) {
     	polygon(location, sideLength, 3);
     }
     
@@ -452,7 +466,7 @@ public class Render {
     	polygon(x, y, sideLength, 3, filled, color);
     }
     
-    public static void triangleCentered(Vector location, int sideLength, boolean filled, Color color) {
+    public static void triangleCentered(VectorI location, int sideLength, boolean filled, Color color) {
     	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3, filled, color);
     }
     
@@ -462,7 +476,7 @@ public class Render {
     	polygon(x, y, sideLength, 3, filled);
     }
     
-    public static void triangleCentered(Vector location, int sideLength, boolean filled) {
+    public static void triangleCentered(VectorI location, int sideLength, boolean filled) {
     	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3, filled);
     }
     
@@ -472,7 +486,7 @@ public class Render {
     	polygon(x, y, sideLength, 3, color);
     }
     
-    public static void triangleCentered(Vector location, int sideLength, Color color) {
+    public static void triangleCentered(VectorI location, int sideLength, Color color) {
     	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3, color);
     }
     
@@ -482,7 +496,7 @@ public class Render {
     	polygon(x, y, sideLength, 3);
     }
     
-    public static void triangleCentered(Vector location, int sideLength) {
+    public static void triangleCentered(VectorI location, int sideLength) {
     	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3);
     }
     
@@ -500,7 +514,7 @@ public class Render {
     	stop();
     }
     
-    public static void line(Vector firstLocation, Vector secondLocation, int lineWidth, Color color) {
+    public static void line(VectorI firstLocation, VectorI secondLocation, int lineWidth, Color color) {
     	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, lineWidth, color);
     }
     
@@ -508,7 +522,7 @@ public class Render {
     	line(firstX, firstY, secondX, secondY, lineWidth, null);
     }
     
-    public static void line(Vector firstLocation, Vector secondLocation, int lineWidth) {
+    public static void line(VectorI firstLocation, VectorI secondLocation, int lineWidth) {
     	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, lineWidth, null);
     }
     
@@ -516,7 +530,7 @@ public class Render {
     	line(firstX, firstY, secondX, secondY, 0, color);
     }
     
-    public static void line(Vector firstLocation, Vector secondLocation, Color color) {
+    public static void line(VectorI firstLocation, VectorI secondLocation, Color color) {
     	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, 0, color);
     }
     
@@ -524,7 +538,7 @@ public class Render {
     	line(firstX, firstY, secondX, secondY, 0, null);
     }
     
-    public static void line(Vector firstLocation, Vector secondLocation) {
+    public static void line(VectorI firstLocation, VectorI secondLocation) {
     	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, 0, null);
     }
 

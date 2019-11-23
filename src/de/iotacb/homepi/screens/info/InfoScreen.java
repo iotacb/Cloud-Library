@@ -9,6 +9,7 @@ import de.iotacb.cloud.core.window.World;
 import de.iotacb.cloud.utilities.files.FilesReader;
 import de.iotacb.cloud.utilities.render.Text;
 import de.iotacb.homepi.screens.gui.buttons.ScreenChangeButton;
+import de.iotacb.homepi.screens.gui.particles.ParticleGenerator;
 import de.iotacb.homepi.screens.main.MainScreen;
 
 public class InfoScreen extends World {
@@ -16,6 +17,8 @@ public class InfoScreen extends World {
 	List<String> infos;
 	
 	Text text;
+	
+	ParticleGenerator gen;
 	
 	public InfoScreen(Window window) {
 		super(window);
@@ -26,16 +29,20 @@ public class InfoScreen extends World {
 		this.text = new Text(15);
 		this.infos = FilesReader.readAsStringList(new File("infos.txt"));
 		
+		this.gen = new ParticleGenerator(window);
+		
 		addEntity(new ScreenChangeButton(window, 20, 20, "Zurueck", MainScreen.class));
 	}
 
 	@Override
 	public void update() {
+		gen.update();
 		updateEntities();
 	}
 
 	@Override
 	public void draw() {
+		gen.draw();
 		drawEntities();
 		
 		int yCount = 0;

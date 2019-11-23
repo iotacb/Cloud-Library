@@ -1,6 +1,21 @@
 package de.iotacb.cloud.utilities.render;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glTexCoord2d;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -15,7 +30,7 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
 
 import de.iotacb.cloud.core.window.Window;
-import de.iotacb.cloud.utilities.math.Vector;
+import de.iotacb.cloud.utilities.math.vector.VectorI;
 import de.iotacb.cloud.utilities.time.Timer;
 
 public class Image {
@@ -149,15 +164,15 @@ public class Image {
 		Render.pop();
 	}
 
-	public void drawImage(Vector location, Vector size) {
+	public void drawImage(VectorI location, VectorI size) {
 		drawImage((int) location.x, (int) location.y, (int) size.x, (int) size.y);
 	}
 
-	public void drawImage(Vector location, int width, int height) {
+	public void drawImage(VectorI location, int width, int height) {
 		drawImage((int) location.x, (int) location.y, width, height);
 	}
 
-	public void drawImage(int x, int y, Vector size) {
+	public void drawImage(int x, int y, VectorI size) {
 		drawImage(x, y, (int) size.x, (int) size.y);
 	}
 
@@ -165,7 +180,7 @@ public class Image {
 		drawImage(x, y, this.imageWidth, this.imageHeight);
 	}
 
-	public void drawImage(Vector location) {
+	public void drawImage(VectorI location) {
 		drawImage((int) location.x, (int) location.y, this.imageWidth, this.imageHeight);
 	}
 
@@ -176,21 +191,21 @@ public class Image {
 		this.images[index].drawImage(x, y, width, height);
 	}
 
-	public void drawImageIndex(Vector location, Vector size, int index) {
+	public void drawImageIndex(VectorI location, VectorI size, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
 		this.images[index].drawImage(location, size);
 	}
 
-	public void drawImageIndex(Vector location, int width, int height, int index) {
+	public void drawImageIndex(VectorI location, int width, int height, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
 		this.images[index].drawImage(location, width, height);
 	}
 
-	public void drawImageIndex(int x, int y, Vector size, int index) {
+	public void drawImageIndex(int x, int y, VectorI size, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
@@ -204,7 +219,7 @@ public class Image {
 		drawImageIndex(x, y, this.images[index].imageWidth, this.images[index].imageHeight, index);
 	}
 
-	public void drawImageIndex(Vector location, int index) {
+	public void drawImageIndex(VectorI location, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
@@ -226,15 +241,15 @@ public class Image {
 		drawImageIndex(x, y, width, height, this.imageIndex);
 	}
 
-	public void drawImageAnimated(Vector location, Vector size, int frameDelay) {
+	public void drawImageAnimated(VectorI location, VectorI size, int frameDelay) {
 		drawImageAnimated((int) location.x, (int) location.y, (int) size.x, (int) size.y, frameDelay);
 	}
 
-	public void drawImageAnimated(Vector location, int width, int height, int frameDelay) {
+	public void drawImageAnimated(VectorI location, int width, int height, int frameDelay) {
 		drawImageAnimated((int) location.x, (int) location.y, width, height, frameDelay);
 	}
 
-	public void drawImageAnimated(int x, int y, Vector size, int frameDelay) {
+	public void drawImageAnimated(int x, int y, VectorI size, int frameDelay) {
 		drawImageAnimated(x, y, (int) size.x, (int) size.y, frameDelay);
 	}
 
@@ -242,7 +257,7 @@ public class Image {
 		drawImageAnimated(x, y, this.images[this.imageIndex].imageWidth, this.images[this.imageIndex].imageHeight, frameDelay);
 	}
 
-	public void drawImageAnimated(Vector location, int frameDelay) {
+	public void drawImageAnimated(VectorI location, int frameDelay) {
 		drawImageAnimated((int) location.x, (int) location.y, frameDelay);
 	}
 

@@ -14,6 +14,7 @@ import de.iotacb.cloud.utilities.files.FilesReader;
 import de.iotacb.cloud.utilities.render.Text;
 import de.iotacb.cloud.utilities.time.Timer;
 import de.iotacb.homepi.screens.gui.buttons.ScreenChangeButton;
+import de.iotacb.homepi.screens.gui.particles.ParticleGenerator;
 import de.iotacb.homepi.screens.main.MainScreen;
 
 public class MuellScreen extends World {
@@ -26,6 +27,8 @@ public class MuellScreen extends World {
 	HashMap<String, String> trashDays;
 	
 	Text text;
+	
+	ParticleGenerator gen;
 
 	public MuellScreen(Window window) {
 		super(window);
@@ -40,6 +43,8 @@ public class MuellScreen extends World {
 		
 		this.trashDays = new HashMap<String, String>();
 		
+		this.gen = new ParticleGenerator(window);
+		
 		addEntity(new ScreenChangeButton(window, 20, 20, "Zurueck", MainScreen.class));
 		
 		addTrashDays();
@@ -47,16 +52,18 @@ public class MuellScreen extends World {
 
 	@Override
 	public void update() {
+		gen.update();
 		updateEntities();
 	}
 
 	@Override
 	public void draw() {
-		checkTrashDay();
+		gen.draw();
+		drawTrashDay();
 		drawEntities();
 	}
 	
-	void checkTrashDay() {
+	void drawTrashDay() {
 		if (time.havePassed(3600)) {
 			this.date = new Date();
 		}
@@ -71,9 +78,9 @@ public class MuellScreen extends World {
 	void addTrashDays() {
 		List<String> lines = FilesReader.readAsStringList(new File("trashDays.txt"));
 		for (String line : lines) {
-			String day = line.split(":")[0].split("\\.")[0];
-			String month = line.split(":")[0].split("\\.")[1];
-			String type = line.split(":")[1];
+			String day = line.trim().split(":")[0].split("\\.")[0];
+			String month = line.trim().split(":")[0].split("\\.")[1];
+			String type = line.trim().split(":")[1];
 			trashDays.put(day + "." + month, type);
 		}
 	}

@@ -2,7 +2,7 @@ package de.iotacb.cloud.utilities.collision;
 
 import java.awt.Color;
 
-import de.iotacb.cloud.utilities.math.Vector;
+import de.iotacb.cloud.utilities.math.vector.VectorD;
 import de.iotacb.cloud.utilities.render.Render;
 
 public class CLine {
@@ -48,15 +48,15 @@ public class CLine {
 		return line.calcPitch() != calcPitch();
 	}
 	
-	public Vector crossPoint(CLine line) {
+	public VectorD crossPoint(CLine line) {
 		double diffB = (line.calcShift() - calcShift());
 		double diffM = (calcPitch() - line.calcPitch());
 		if (diffM == 0 || diffB == 0) {
-			return new Vector();
+			return new VectorD();
 		}
 		double x = diffB / diffM;
 		double y = calcPitch() * x + calcShift();
-		return new Vector(x, y);
+		return new VectorD(x, y);
 	}
 
 }
