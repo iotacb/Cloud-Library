@@ -1,17 +1,22 @@
-# What is Cloud?
-Cloud is a game creation library written in Java based on LWJGL.
-LWJGL is the foundation of the Cloud, Cloud is written ontop of it.
-Cloud is not made for professional usage, it's made for Java beginners that want to create a little game.
+# Cloud
 
+![Cloud](/assets/cloud_logo-transparent.png?raw=true "Cloud")
 
-# What libraries are used?
-- [LWJGL](https://lwjgl.com/) the foundation of the library
-- [PI4J](https://pi4j.com/) for usage on a RaspberryPi
+Cloud is a library build ontop of LWJGL to make the usage of LWJGL easier.
+You don't have to write a lot of code before rendering something in a window.
+Cloud is made for 2D projects so if you want to create something in 3D you have to look somewhere else.
 
-# What is possible with Cloud?
-As I said, Cloud is just made for little projects.
-But you can create for example a little 2D shooter or something else in a little amount of time.
+## How to get started
+Just head over to the release page of cloud and download the latest version of it.
+Then add the downloaded jar to the classpath of your Java project.
 
-# How to start?
-To start using Cloud, download the source code of it and add it to your project. That way, you can change stuff of Cloud on the fly. So if theres something bothers you, you can change it how you want it to be.
-The next steps will be explained in the [tutorial projects](). (Will be added soon!)
+## Why?
+I created cloud to make the process to get something on screen using LWJGL easier, because I think in LWJGL it does take alot of code and time just to open a window and even more to get something rendered.
+But still you shouldn't use it for a big game or something like that because for that you still should use LWJGL directly.
+Cloud is great for Java beginners which want to create a game!
+
+### Coming soon
+- Improve the performance of the library
+- Collision System
+- Audio System
+- (Physics)
