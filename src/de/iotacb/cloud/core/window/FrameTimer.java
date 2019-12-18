@@ -10,7 +10,7 @@ public class FrameTimer {
 	
 	int fps, fpsCount, ups, upsCount;
 	
-	public void init() {
+	public FrameTimer() {
 		lastLoopTime = getTime();
 	}
 	

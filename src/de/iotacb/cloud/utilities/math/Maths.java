@@ -1,11 +1,9 @@
 package de.iotacb.cloud.utilities.math;
 
-import de.iotacb.cloud.utilities.math.vector.VectorD;
-import de.iotacb.cloud.utilities.math.vector.VectorI;
-
 public class Maths {
 
 	public static double PI = Math.PI, TAU = Math.PI * 2;
+	public static double RAD2DEG = 360 / TAU, DEG2RAD = TAU / 360;
 
 	public static int sign(double value) {
 		return (value > 0 ? 1 : 0);
@@ -43,7 +41,7 @@ public class Maths {
 		return angle;
 	}
 
-	public static double direction(VectorD firstLocation, VectorD secondLocation) {
+	public static double direction(Vec firstLocation, Vec secondLocation) {
 		double angle = Math
 				.toDegrees(Math.atan2(secondLocation.y - firstLocation.y, secondLocation.x - firstLocation.x)) + 90;
 		if (angle < 0) {
@@ -52,14 +50,6 @@ public class Maths {
 		return angle;
 	}
 	
-	public static double direction(VectorI firstLocation, VectorD secondLocation) {
-		double angle = Math
-				.toDegrees(Math.atan2(secondLocation.y - firstLocation.y, secondLocation.x - firstLocation.x)) + 90;
-		if (angle < 0) {
-			angle += 360;
-		}
-		return angle;
-	}
 
 	public static double lengthDirX(double value, double direction) {
 		return Math.cos(Math.toRadians(direction)) * value;
@@ -75,13 +65,7 @@ public class Maths {
 		return Math.sqrt(diffX * diffX + diffY * diffY);
 	}
 
-	public static double dist(VectorD firstLocation, VectorD secondLocation) {
-		double diffX = secondLocation.x - firstLocation.x;
-		double diffY = secondLocation.y - firstLocation.y;
-		return Math.sqrt(diffX * diffX + diffY * diffY);
-	}
-	
-	public static double dist(VectorI firstLocation, VectorI secondLocation) {
+	public static double dist(Vec firstLocation, Vec secondLocation) {
 		double diffX = secondLocation.x - firstLocation.x;
 		double diffY = secondLocation.y - firstLocation.y;
 		return Math.sqrt(diffX * diffX + diffY * diffY);
@@ -91,11 +75,7 @@ public class Maths {
 		return Math.sqrt(x * x + y * y);
 	}
 
-	public static double length(VectorD location) {
-		return length(location.x, location.y);
-	}
-	
-	public static double length(VectorI location) {
+	public static double length(Vec location) {
 		return length(location.x, location.y);
 	}
 
@@ -152,14 +132,9 @@ public class Maths {
 		return (length(diffX, diffY) - circleRadius / 2) * 2;
 	}
 
-	public static double signedDistanceToCircle(VectorD firstLocation, VectorD secondLocation, int circleRadius) {
+	public static double signedDistanceToCircle(Vec firstLocation, Vec secondLocation, int circleRadius) {
 		return signedDistanceToCircle((int) firstLocation.x, (int) firstLocation.y, (int) secondLocation.x,
 				(int) secondLocation.y, circleRadius);
-	}
-	
-	public static double signedDistanceToCircle(VectorI firstLocation, VectorI secondLocation, int circleRadius) {
-		return signedDistanceToCircle(firstLocation.x, firstLocation.y, secondLocation.x,
-				secondLocation.y, circleRadius);
 	}
 
 
@@ -173,24 +148,15 @@ public class Maths {
 		return (unsignedDistance + distanceInRect);
 	}
 
-	public static double signedDistanceToRect(VectorD firstLocation, VectorD secondLocation, int width, int height) {
+	public static double signedDistanceToRect(Vec firstLocation, Vec secondLocation, int width, int height) {
 		return signedDistanceToRect((int) firstLocation.x, (int) firstLocation.y, (int) secondLocation.x,
 				(int) secondLocation.y, width, height);
 	}
-	
-	public static double signedDistanceToRect(VectorI firstLocation, VectorI secondLocation, int width, int height) {
-		return signedDistanceToRect(firstLocation.x, firstLocation.y, secondLocation.x,
-				secondLocation.y, width, height);
-	}
 
-	public static double signedDistanceToRect(VectorD firstLocation, VectorD secondLocation, VectorD size) {
+	public static double signedDistanceToRect(Vec firstLocation, Vec secondLocation, Vec size) {
 		return signedDistanceToRect(firstLocation, secondLocation, (int) size.x, (int) size.y);
 	}
 	
-	public static double signedDistanceToRect(VectorI firstLocation, VectorI secondLocation, VectorI size) {
-		return signedDistanceToRect(firstLocation.getVectorDouble(), secondLocation.getVectorDouble(), size.getVectorDouble());
-	}
-
 	public static double map(double value, double istart, double istop, double ostart, double ostop) {
 		return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 	}

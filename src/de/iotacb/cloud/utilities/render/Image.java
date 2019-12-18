@@ -1,6 +1,6 @@
 package de.iotacb.cloud.utilities.render;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
@@ -30,7 +30,7 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
 
 import de.iotacb.cloud.core.window.Window;
-import de.iotacb.cloud.utilities.math.vector.VectorI;
+import de.iotacb.cloud.utilities.math.Vec;
 import de.iotacb.cloud.utilities.time.Timer;
 
 public class Image {
@@ -95,7 +95,7 @@ public class Image {
 		this.imageHeight = image.getHeight();
 
 		int[] imagePixels = image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-		this.pixelBuffer = BufferUtils.createByteBuffer(3 * 1024 * 1024);
+		this.pixelBuffer = BufferUtils.createByteBuffer(imageWidth * imageHeight * 4); // each pixel (rgba) = width * height * 4 (r,g,b,a)
 
 		for (int i = 0; i < imagePixels.length; i++) {
 			int pixel = imagePixels[i];
@@ -110,7 +110,7 @@ public class Image {
 		this.finishedLoading = true;
 	}
 
-	public void drawImage(int x, int y, int width, int height) {
+	public void drawImage(double x, double y, double width, double height) {
 		if (this.pixelBuffer == null) {
 			try {
 				throw new Exception("Pixel buffer of image is empty. Error: #004");
@@ -130,15 +130,15 @@ public class Image {
 		Render.enable(GL_BLEND);
 		Render.disable(GL_LIGHTING);
 		glBindTexture(GL_TEXTURE_2D, this.imageId);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this.imageWidth, this.imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 				this.pixelBuffer);
 
-		int diffW = Math.abs(this.imageWidth - width);
-		int diffH = Math.abs(this.imageHeight - height);
+		double diffW = Math.abs(this.imageWidth - width);
+		double diffH = Math.abs(this.imageHeight - height);
 		x += (this.imageWidth - diffW);
 		y += (this.imageHeight - diffH);
 
@@ -163,70 +163,70 @@ public class Image {
 
 		Render.pop();
 	}
-
-	public void drawImage(VectorI location, VectorI size) {
-		drawImage((int) location.x, (int) location.y, (int) size.x, (int) size.y);
+	
+	public void drawImage(Vec location, Vec size) {
+		drawImage(location.x, location.y, size.x, size.y);
 	}
 
-	public void drawImage(VectorI location, int width, int height) {
-		drawImage((int) location.x, (int) location.y, width, height);
+	public void drawImage(Vec location, double width, double height) {
+		drawImage(location.x, location.y, width, height);
 	}
 
-	public void drawImage(int x, int y, VectorI size) {
-		drawImage(x, y, (int) size.x, (int) size.y);
+	public void drawImage(double x, double y, Vec size) {
+		drawImage(x, y, size.x, size.y);
 	}
 
-	public void drawImage(int x, int y) {
+	public void drawImage(double x, double y) {
 		drawImage(x, y, this.imageWidth, this.imageHeight);
 	}
 
-	public void drawImage(VectorI location) {
-		drawImage((int) location.x, (int) location.y, this.imageWidth, this.imageHeight);
+	public void drawImage(Vec location) {
+		drawImage(location.x, location.y, this.imageWidth, this.imageHeight);
 	}
 
-	public void drawImageIndex(int x, int y, int width, int height, int index) {
+	public void drawImageIndex(double x, double y, double width, double height, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
 		this.images[index].drawImage(x, y, width, height);
 	}
 
-	public void drawImageIndex(VectorI location, VectorI size, int index) {
+	public void drawImageIndex(Vec location, Vec size, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
 		this.images[index].drawImage(location, size);
 	}
 
-	public void drawImageIndex(VectorI location, int width, int height, int index) {
+	public void drawImageIndex(Vec location, double width, double height, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
 		this.images[index].drawImage(location, width, height);
 	}
 
-	public void drawImageIndex(int x, int y, VectorI size, int index) {
+	public void drawImageIndex(double x, double y, Vec size, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
 		this.images[index].drawImage(x, y, size);
 	}
 
-	public void drawImageIndex(int x, int y, int index) {
+	public void drawImageIndex(double x, double y, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
 		drawImageIndex(x, y, this.images[index].imageWidth, this.images[index].imageHeight, index);
 	}
 
-	public void drawImageIndex(VectorI location, int index) {
+	public void drawImageIndex(Vec location, int index) {
 		if (index < 0 || index > this.images.length - 1 || this.images == null) {
 			return;
 		}
-		drawImageIndex((int) location.x, (int) location.y, index);
+		drawImageIndex(location.x, location.y, index);
 	}
 
-	public void drawImageAnimated(int x, int y, int width, int height, int frameDelay) {
+	public void drawImageAnimated(double x, double y, double width, double height, int frameDelay) {
 		if (this.images.length <= 0 || this.images == null) {
 			return;
 		}
@@ -241,26 +241,119 @@ public class Image {
 		drawImageIndex(x, y, width, height, this.imageIndex);
 	}
 
-	public void drawImageAnimated(VectorI location, VectorI size, int frameDelay) {
-		drawImageAnimated((int) location.x, (int) location.y, (int) size.x, (int) size.y, frameDelay);
+	public void drawImageAnimated(Vec location, Vec size, int frameDelay) {
+		drawImageAnimated(location.x, location.y, size.x, size.y, frameDelay);
 	}
 
-	public void drawImageAnimated(VectorI location, int width, int height, int frameDelay) {
-		drawImageAnimated((int) location.x, (int) location.y, width, height, frameDelay);
+	public void drawImageAnimated(Vec location, double width, double height, int frameDelay) {
+		drawImageAnimated(location.x, location.y, width, height, frameDelay);
 	}
 
-	public void drawImageAnimated(int x, int y, VectorI size, int frameDelay) {
-		drawImageAnimated(x, y, (int) size.x, (int) size.y, frameDelay);
+	public void drawImageAnimated(double x, double y, Vec size, int frameDelay) {
+		drawImageAnimated(x, y, size.x, size.y, frameDelay);
 	}
 
-	public void drawImageAnimated(int x, int y, int frameDelay) {
+	public void drawImageAnimated(double x, double y, int frameDelay) {
 		drawImageAnimated(x, y, this.images[this.imageIndex].imageWidth, this.images[this.imageIndex].imageHeight, frameDelay);
 	}
-
-	public void drawImageAnimated(VectorI location, int frameDelay) {
-		drawImageAnimated((int) location.x, (int) location.y, frameDelay);
+	
+	public void drawImageCentered(double x, double y, double width, double height) {
+		drawImage(x - width / 2, y - height / 2, width, height);
+	}
+	
+	public void drawImageCentered(Vec location, Vec size) {
+		drawImage(location.x - size.x / 2, location.y - size.y / 2, size.x, size.y);
 	}
 
+	public void drawImageCentered(Vec location, double width, double height) {
+		drawImage(location.x - width / 2, location.y - height / 2, width, height);
+	}
+
+	public void drawImageCentered(double x, double y, Vec size) {
+		drawImage(x - size.x / 2, y - size.y / 2, size.x, size.y);
+	}
+
+	public void drawImageCentered(double x, double y) {
+		drawImage(x - imageWidth / 2, y - imageHeight / 2, this.imageWidth, this.imageHeight);
+	}
+
+	public void drawImageCentered(Vec location) {
+		drawImage(location.x - imageWidth / 2, location.y - imageHeight / 2, this.imageWidth, this.imageHeight);
+	}
+
+	public void drawImageCenteredIndex(double x, double y, double width, double height, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImageCentered(x, y, width, height);
+	}
+
+	public void drawImageCenteredIndex(Vec location, Vec size, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImageCentered(location, size);
+	}
+
+	public void drawImageCenteredIndex(Vec location, double width, double height, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImageCentered(location, width, height);
+	}
+
+	public void drawImageCenteredIndex(double x, double y, Vec size, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		this.images[index].drawImageCentered(x, y, size);
+	}
+
+	public void drawImageCenteredIndex(double x, double y, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		drawImageIndex(x, y, this.images[index].imageWidth, this.images[index].imageHeight, index);
+	}
+
+	public void drawImageCenreredIndex(Vec location, int index) {
+		if (index < 0 || index > this.images.length - 1 || this.images == null) {
+			return;
+		}
+		drawImageCenteredIndex(location.x, location.y, index);
+	}
+
+	public void drawImageCenteredAnimated(double x, double y, double width, double height, int frameDelay) {
+		if (this.images.length <= 0 || this.images == null) {
+			return;
+		}
+
+		if (this.animationTimer.havePassed(frameDelay)) {
+			if (this.imageIndex < this.images.length - 1) {
+				this.imageIndex++;
+			} else {
+				this.imageIndex = 0;
+			}
+		}
+		drawImageCenteredIndex(x, y, width, height, this.imageIndex);
+	}
+
+	public void drawImageCenteredAnimated(Vec location, Vec size, int frameDelay) {
+		drawImageCenteredAnimated(location.x, location.y, size.x, size.y, frameDelay);
+	}
+
+	public void drawImageCenteredAnimated(Vec location, double width, double height, int frameDelay) {
+		drawImageCenteredAnimated(location.x, location.y, width, height, frameDelay);
+	}
+
+	public void drawImageCenteredAnimated(double x, double y, Vec size, int frameDelay) {
+		drawImageCenteredAnimated(x, y, size.x, size.y, frameDelay);
+	}
+
+	public void drawImageCenteredAnimated(double x, double y, int frameDelay) {
+		drawImageCenteredAnimated(x, y, this.images[this.imageIndex].imageWidth, this.images[this.imageIndex].imageHeight, frameDelay);
+	}
+	
 	public void reloadImage() {
 		try {
 			this.finishedLoading = false;
@@ -268,5 +361,13 @@ public class Image {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public int getImageWidth() {
+		return imageWidth;
+	}
+	
+	public int getImageHeight() {
+		return imageHeight;
 	}
 }

@@ -1,7 +1,6 @@
 package de.iotacb.cloud.utilities.collision;
 
 import de.iotacb.cloud.utilities.math.Maths;
-import de.iotacb.cloud.utilities.math.vector.VectorD;
 
 public class Collision {
 	

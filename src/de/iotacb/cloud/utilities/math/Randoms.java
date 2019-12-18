@@ -14,7 +14,7 @@ public class Randoms {
 		return (float) randomDouble(minValue, maxValue);
 	}
 	
-	public static int randomInt(int minValue, int maxValue) {
+	public static int randomInteger(int minValue, int maxValue) {
 		return (int) randomDouble(minValue, maxValue);
 	}
 	
@@ -30,16 +30,16 @@ public class Randoms {
 		return randomFloat(0, maxValue);
 	}
 	
-	public static int randomInt(int maxValue) {
-		return randomInt(0, maxValue);
+	public static int randomInteger(int maxValue) {
+		return randomInteger(0, maxValue);
 	}
 	
-	public static boolean randomBool() {
+	public static boolean randomBoolean() {
 		return new java.util.Random().nextBoolean();
 	}
 	
 	public static Object choose(final Object...objects) {
-		return (objects.length > 0 ? objects[randomInt(objects.length - 1)] : null);
+		return (objects.length > 0 ? objects[randomInteger(objects.length - 1)] : null);
 	}
 	
 	public static boolean chance(final double percentage) {

@@ -1,12 +1,36 @@
 package de.iotacb.cloud.utilities.render;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_POINT_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_POLYGON_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glColor4d;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotated;
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glTranslated;
+import static org.lwjgl.opengl.GL11.glVertex2d;
 
 import java.awt.Color;
 
 import de.iotacb.cloud.core.window.Window;
 import de.iotacb.cloud.utilities.math.Maths;
-import de.iotacb.cloud.utilities.math.vector.VectorI;
+import de.iotacb.cloud.utilities.math.Vec;
 
 public class Render {
 	
@@ -71,7 +95,7 @@ public class Render {
         glVertex2d(x, y);
     }
     
-    public static void vertex(VectorI location) {
+    public static void vertex(Vec location) {
         vertex(location.x, location.y);
     }
     
@@ -79,7 +103,7 @@ public class Render {
         glTranslated(x, y, 0);
     }
     
-    public static void translate(VectorI location) {
+    public static void translate(Vec location) {
         translate(location.x, location.y);
     }
     
@@ -87,16 +111,12 @@ public class Render {
         glScaled(x, y, 0);
     }
     
-    public static void scale(VectorI scaling) {
+    public static void scale(Vec scaling) {
         scale(scaling.x, scaling.y);
     }
     
     public static void rotate(double x, double y, double z, double angle) {
         glRotated(angle, x, y, z);
-    }
-    
-    public static void rotate(VectorI axis, double angle) {
-        rotate(axis.x, axis.y, axis.z, angle);
     }
     
     public static void color(double red, double green, double blue, double alpha) {
@@ -111,7 +131,11 @@ public class Render {
         color(color.getRed() / 255.0, color.getGreen() / 255.0, color.getBlue() / 255.0, color.getAlpha() / 255.0);
     }
     
-    public static void rect(int x, int y, int width, int height, boolean filled, Color color) {
+    public static void lineWidth(double width) {
+    	glLineWidth((float)width);
+    }
+    
+    public static void rect(double x, double y, double width, double height, boolean filled, Color color) {
     	start();
     	if (color != null)
     		color(color);
@@ -132,154 +156,154 @@ public class Render {
     	stop();
     }
     
-    public static void rect(VectorI location, VectorI size, boolean filled, Color color) {
-    	rect((int)location.x, (int)location.y, (int)size.x, (int)size.y, filled, color);
+    public static void rect(Vec location, Vec size, boolean filled, Color color) {
+    	rect(location.x, location.y, size.x, size.y, filled, color);
     }
     
-    public static void rect(int x, int y, VectorI size, boolean filled, Color color) {
-    	rect(x, y, (int)size.x, (int)size.y, filled, color);
+    public static void rect(double x, double y, Vec size, boolean filled, Color color) {
+    	rect(x, y, size.x, size.y, filled, color);
     }
     
-    public static void rect(VectorI location, int width, int height, boolean filled, Color color) {
-    	rect((int)location.x, (int)location.y, width, height, filled, color);
+    public static void rect(Vec location, double width, double height, boolean filled, Color color) {
+    	rect(location.x, location.y, width, height, filled, color);
     }
     
-    public static void rect(int x, int y, int width, int height, boolean filled) {
+    public static void rect(double x, double y, double width, double height, boolean filled) {
     	rect(x, y, width, height, filled, null);
     }
     
-    public static void rect(VectorI location, VectorI size, boolean filled) {
+    public static void rect(Vec location, Vec size, boolean filled) {
     	rect(location, size, filled, null);
     }
     
-    public static void rect(int x, int y, VectorI size, boolean filled) {
-    	rect(x, y, (int)size.x, (int)size.y, filled);
+    public static void rect(double x, double y, Vec size, boolean filled) {
+    	rect(x, y, size.x, size.y, filled);
     }
     
-    public static void rect(VectorI location, int width, int height, boolean filled) {
-    	rect((int)location.x, (int)location.y, width, height, filled);
+    public static void rect(Vec location, double width, double height, boolean filled) {
+    	rect(location.x, location.y, width, height, filled);
     }
     
-    public static void rect(int x, int y, int width, int height, Color color) {
+    public static void rect(double x, double y, double width, double height, Color color) {
     	rect(x, y, width, height, true, color);
     }
     
-    public static void rect(VectorI location, VectorI size, Color color) {
+    public static void rect(Vec location, Vec size, Color color) {
     	rect(location, size, true, color);
     }
     
-    public static void rect(int x, int y, VectorI size, Color color) {
-    	rect(x, y, (int)size.x, (int)size.y, color);
+    public static void rect(double x, double y, Vec size, Color color) {
+    	rect(x, y, size.x, size.y, color);
     }
     
-    public static void rect(VectorI location, int width, int height, Color color) {
-    	rect((int)location.x, (int)location.y, width, height, color);
+    public static void rect(Vec location, double width, double height, Color color) {
+    	rect(location.x, location.y, width, height, color);
     }
     
-    public static void rect(int x, int y, int width, int height) {
+    public static void rect(double x, double y, double width, double height) {
     	rect(x, y, width, height, true, null);
     }
     
-    public static void rect(VectorI location, VectorI size) {
+    public static void rect(Vec location, Vec size) {
     	rect(location, size, true, null);
     }
     
-    public static void rect(int x, int y, VectorI size) {
-    	rect(x, y, (int)size.x, (int)size.y);
+    public static void rect(double x, double y, Vec size) {
+    	rect(x, y, size.x, size.y);
     }
     
-    public static void rect(VectorI location, int width, int height) {
-    	rect((int)location.x, (int)location.y, width, height);
+    public static void rect(Vec location, double width, double height) {
+    	rect(location.x, location.y, width, height);
     }
     
-    public static void rectCentered(int x, int y, int width, int height, boolean filled, Color color) {
+    public static void rectCentered(double x, double y, double width, double height, boolean filled, Color color) {
     	x -= width / 2;
     	y -= height / 2;
     	rect(x, y, width, height, filled, color);
     }
     
-    public static void rectCentered(VectorI location, VectorI size, boolean filled, Color color) {
-    	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), (int)size.x, (int)size.y, filled, color);
+    public static void rectCentered(Vec location, Vec size, boolean filled, Color color) {
+    	rect((location.x - size.x / 2), (location.y - size.y / 2), size.x, size.y, filled, color);
     }
     
-    public static void rectCentered(int x, int y, VectorI size, boolean filled, Color color) {
+    public static void rectCentered(double x, double y, Vec size, boolean filled, Color color) {
     	x -= size.x / 2;
     	y -= size.y / 2;
-    	rect(x, y, (int)size.x, (int)size.y, filled, color);
+    	rect(x, y, size.x, size.y, filled, color);
     }
     
-    public static void rectCentered(VectorI location, int width, int height, boolean filled, Color color) {
-    	rect((int)(location.x - width / 2), (int)(location.y - height / 2), width, height, filled, color);
+    public static void rectCentered(Vec location, double width, double height, boolean filled, Color color) {
+    	rect((location.x - width / 2), (location.y - height / 2), width, height, filled, color);
     }
     
-    public static void rectCentered(int x, int y, int width, int height, boolean filled) {
+    public static void rectCentered(double x, double y, double width, double height, boolean filled) {
     	x -= width / 2;
     	y -= height / 2;
     	rect(x, y, width, height, filled, null);
     }
     
-    public static void rectCentered(VectorI location, VectorI size, boolean filled) {
-    	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), size, filled, null);
+    public static void rectCentered(Vec location, Vec size, boolean filled) {
+    	rect((location.x - size.x / 2), (location.y - size.y / 2), size, filled, null);
     }
     
-    public static void rectCentered(int x, int y, VectorI size, boolean filled) {
+    public static void rectCentered(double x, double y, Vec size, boolean filled) {
     	x -= size.x / 2;
     	y -= size.y / 2;
-    	rect(x, y, (int)size.x, (int)size.y, filled);
+    	rect(x, y, size.x, size.y, filled);
     }
     
-    public static void rectCentered(VectorI location, int width, int height, boolean filled) {
-    	rect((int)location.x - width / 2, (int)location.y - height / 2, width, height, filled);
+    public static void rectCentered(Vec location, double width, double height, boolean filled) {
+    	rect(location.x - width / 2, location.y - height / 2, width, height, filled);
     }
     
-    public static void rectCentered(int x, int y, int width, int height, Color color) {
+    public static void rectCentered(double x, double y, double width, double height, Color color) {
     	x -= width / 2;
     	y -= height / 2;
     	rect(x, y, width, height, true, color);
     }
     
-    public static void rectCentered(VectorI location, VectorI size, Color color) {
-    	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), size, true, color);
+    public static void rectCentered(Vec location, Vec size, Color color) {
+    	rect((location.x - size.x / 2), (location.y - size.y / 2), size, true, color);
     }
     
-    public static void rectCentered(int x, int y, VectorI size, Color color) {
+    public static void rectCentered(double x, double y, Vec size, Color color) {
     	x -= size.x / 2;
     	y -= size.y / 2;
-    	rect(x, y, (int)size.x, (int)size.y, color);
+    	rect(x, y, size.x, size.y, color);
     }
     
-    public static void rectCentered(VectorI location, int width, int height, Color color) {
-    	rect((int)location.x - width / 2, (int)location.y - height / 2, width, height, color);
+    public static void rectCentered(Vec location, double width, double height, Color color) {
+    	rect(location.x - width / 2, location.y - height / 2, width, height, color);
     }
     
-    public static void rectCentered(int x, int y, int width, int height) {
+    public static void rectCentered(double x, double y, double width, double height) {
     	x -= width / 2;
     	y -= height / 2;
     	rect(x, y, width, height, true, null);
     }
     
-    public static void rectCentered(VectorI location, VectorI size) {
-    	rect((int)(location.x - size.x / 2), (int)(location.y - size.y / 2), size, true, null);
+    public static void rectCentered(Vec location, Vec size) {
+    	rect((location.x - size.x / 2), (location.y - size.y / 2), size, true, null);
     }
     
-    public static void rectCentered(int x, int y, VectorI size) {
+    public static void rectCentered(double x, double y, Vec size) {
     	x -= size.x / 2;
     	y -= size.y / 2;
-    	rect(x, y, (int)size.x, (int)size.y);
+    	rect(x, y, size.x, size.y);
     }
     
-    public static void rectCentered(VectorI location, int width, int height) {
-    	rect((int)location.x - width / 2, (int)location.y - height / 2, width, height);
+    public static void rectCentered(Vec location, double width, double height) {
+    	rect(location.x - width / 2, location.y - height / 2, width, height);
     }
     
-    public static void polygon(int x, int y, int sideLength, int amountOfSides, boolean filled, Color color) {
+    public static void polygon(double x, double y, double sideLength, double amountOfSides, boolean filled, Color color) {
     	sideLength /= 2;
     	start();
     	if (color != null)
     		color(color);
     	begin(filled ? GL_TRIANGLE_FAN : GL_LINES);
     	{
-    		for (int i = 0; i <= amountOfSides; i++) {
+    		for (double i = 0; i <= amountOfSides; i++) {
     			double angle = i * Maths.TAU / amountOfSides;
     			vertex(x + (sideLength * Math.cos(angle)) + sideLength, y + (sideLength * Math.sin(angle)) + sideLength);
     		}
@@ -288,223 +312,223 @@ public class Render {
     	stop();
     }
     
-    public static void polygon(VectorI location, int sideLength, int amountOfSides, boolean filled, Color color) {
-    	polygon((int)location.x, (int)location.y, sideLength, amountOfSides, filled, color);
+    public static void polygon(Vec location, double sideLength, int amountOfSides, boolean filled, Color color) {
+    	polygon(location.x, location.y, sideLength, amountOfSides, filled, color);
     }
     
-    public static void polygon(int x, int y, int sideLength, int amountOfSides, boolean filled) {
+    public static void polygon(double x, double y, double sideLength, int amountOfSides, boolean filled) {
     	polygon(x, y, sideLength, amountOfSides, filled, null);
     }
     
-    public static void polygon(VectorI location, int sideLength, int amountOfSides, boolean filled) {
+    public static void polygon(Vec location, double sideLength, int amountOfSides, boolean filled) {
     	polygon(location, sideLength, amountOfSides, filled, null);
     }
     
-    public static void polygon(int x, int y, int sideLength, int amountOfSides, Color color) {
+    public static void polygon(double x, double y, double sideLength, int amountOfSides, Color color) {
     	polygon(x, y, sideLength, amountOfSides, true, color);
     }
     
-    public static void polygon(VectorI location, int sideLength, int amountOfSides, Color color) {
+    public static void polygon(Vec location, double sideLength, int amountOfSides, Color color) {
     	polygon(location, sideLength, amountOfSides, true, color);
     }
     
-    public static void polygon(int x, int y, int sideLength, int amountOfSides) {
+    public static void polygon(double x, double y, double sideLength, int amountOfSides) {
     	polygon(x, y, sideLength, amountOfSides, true, null);
     }
     
-    public static void polygon(VectorI location, int sideLength, int amountOfSides) {
+    public static void polygon(Vec location, double sideLength, int amountOfSides) {
     	polygon(location, sideLength, amountOfSides, true, null);
     }
     
-    public static void polygonCentered(int x, int y, int sideLength, int amountOfSides, boolean filled, Color color) {
+    public static void polygonCentered(double x, double y, double sideLength, int amountOfSides, boolean filled, Color color) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, amountOfSides, filled, color);
     }
     
-    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides, boolean filled, Color color) {
-    	polygon((int)location.x - sideLength / 2, (int)location.y - sideLength / 2, sideLength, amountOfSides, filled, color);
+    public static void polygonCentered(Vec location, double sideLength, int amountOfSides, boolean filled, Color color) {
+    	polygon(location.x - sideLength / 2, location.y - sideLength / 2, sideLength, amountOfSides, filled, color);
     }
     
-    public static void polygonCentered(int x, int y, int sideLength, int amountOfSides, boolean filled) {
+    public static void polygonCentered(double x, double y, double sideLength, int amountOfSides, boolean filled) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, amountOfSides, filled, null);
     }
     
-    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides, boolean filled) {
-    	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, amountOfSides, filled, null);
+    public static void polygonCentered(Vec location, double sideLength, int amountOfSides, boolean filled) {
+    	polygon((location.x - sideLength / 2), (location.y - sideLength / 2), sideLength, amountOfSides, filled, null);
     }
     
-    public static void polygonCentered(int x, int y, int sideLength, int amountOfSides, Color color) {
+    public static void polygonCentered(double x, double y, double sideLength, int amountOfSides, Color color) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, amountOfSides, true, color);
     }
     
-    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides, Color color) {
-    	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, amountOfSides, true, color);
+    public static void polygonCentered(Vec location, double sideLength, int amountOfSides, Color color) {
+    	polygon((location.x - sideLength / 2), (location.y - sideLength / 2), sideLength, amountOfSides, true, color);
     }
     
-    public static void polygonCentered(int x, int y, int sideLength, int amountOfSides) {
+    public static void polygonCentered(double x, double y, double sideLength, int amountOfSides) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, amountOfSides, true, null);
     }
     
-    public static void polygonCentered(VectorI location, int sideLength, int amountOfSides) {
-    	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, amountOfSides, true, null);
+    public static void polygonCentered(Vec location, double sideLength, int amountOfSides) {
+    	polygon((location.x - sideLength / 2), (location.y - sideLength / 2), sideLength, amountOfSides, true, null);
     }
     
-    public static void circle(int x, int y, int radius, boolean filled, Color color) {
+    public static void circle(double x, double y, double radius, boolean filled, Color color) {
     	polygon(x, y, radius, 360, filled, color);
     }
     
-    public static void circle(VectorI location, int radius, boolean filled, Color color) {
+    public static void circle(Vec location, double radius, boolean filled, Color color) {
     	polygon(location, radius, 360, filled, color);
     }
     
-    public static void circle(int x, int y, int radius, boolean filled) {
+    public static void circle(double x, double y, double radius, boolean filled) {
     	polygon(x, y, radius, 360, filled);
     }
     
-    public static void circle(VectorI location, int radius, boolean filled) {
+    public static void circle(Vec location, double radius, boolean filled) {
     	polygon(location, radius, 360, filled);
     }
     
-    public static void circle(int x, int y, int radius, Color color) {
+    public static void circle(double x, double y, double radius, Color color) {
     	polygon(x, y, radius, 360, color);
     }
     
-    public static void circle(VectorI location, int radius, Color color) {
+    public static void circle(Vec location, double radius, Color color) {
     	polygon(location, radius, 360, color);
     }
     
-    public static void circle(int x, int y, int radius) {
+    public static void circle(double x, double y, double radius) {
     	polygon(x, y, radius, 360);
     }
     
-    public static void circle(VectorI location, int radius) {
+    public static void circle(Vec location, double radius) {
     	polygon(location, radius, 360);
     }
     
-    public static void circleCentered(int x, int y, int radius, boolean filled, Color color) {
+    public static void circleCentered(double x, double y, double radius, boolean filled, Color color) {
     	x -= radius / 2;
     	y -= radius / 2;
     	polygon(x, y, radius, 360, filled, color);
     }
     
-    public static void circleCentered(VectorI location, int radius, boolean filled, Color color) {
-    	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360, filled, color);
+    public static void circleCentered(Vec location, double radius, boolean filled, Color color) {
+    	polygon((location.x - radius / 2), (location.y - radius / 2), radius, 360, filled, color);
     }
     
-    public static void circleCentered(int x, int y, int radius, boolean filled) {
+    public static void circleCentered(double x, double y, double radius, boolean filled) {
     	x -= radius / 2;
     	y -= radius / 2;
     	polygon(x, y, radius, 360, filled);
     }
     
-    public static void circleCentered(VectorI location, int radius, boolean filled) {
-    	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360, filled);
+    public static void circleCentered(Vec location, double radius, boolean filled) {
+    	polygon((location.x - radius / 2), (location.y - radius / 2), radius, 360, filled);
     }
     
-    public static void circleCentered(int x, int y, int radius, Color color) {
+    public static void circleCentered(double x, double y, double radius, Color color) {
     	x -= radius / 2;
     	y -= radius / 2;
     	polygon(x, y, radius, 360, color);
     }
     
-    public static void circleCentered(VectorI location, int radius, Color color) {
-    	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360, color);
+    public static void circleCentered(Vec location, double radius, Color color) {
+    	polygon((location.x - radius / 2), (location.y - radius / 2), radius, 360, color);
     }
     
-    public static void circleCentered(int x, int y, int radius) {
+    public static void circleCentered(double x, double y, double radius) {
     	x -= radius / 2;
     	y -= radius / 2;
     	polygon(x, y, radius, 360);
     }
     
-    public static void circleCentered(VectorI location, int radius) {
-    	polygon((int)(location.x - radius / 2), (int)(location.y - radius / 2), radius, 360);
+    public static void circleCentered(Vec location, double radius) {
+    	polygon((location.x - radius / 2), (location.y - radius / 2), radius, 360);
     }
     
-    public static void triangle(int x, int y, int sideLength, boolean filled, Color color) {
+    public static void triangle(double x, double y, double sideLength, boolean filled, Color color) {
     	polygon(x, y, sideLength, 3, filled, color);
     }
     
-    public static void triangle(VectorI location, int sideLength, boolean filled, Color color) {
+    public static void triangle(Vec location, double sideLength, boolean filled, Color color) {
     	polygon(location, sideLength, 3, filled, color);
     }
     
-    public static void triangle(int x, int y, int sideLength, boolean filled) {
+    public static void triangle(double x, double y, double sideLength, boolean filled) {
     	polygon(x, y, sideLength, 3, filled);
     }
     
-    public static void triangle(VectorI location, int sideLength, boolean filled) {
+    public static void triangle(Vec location, double sideLength, boolean filled) {
     	polygon(location, sideLength, 3, filled);
     }
     
-    public static void triangle(int x, int y, int sideLength, Color color) {
+    public static void triangle(double x, double y, double sideLength, Color color) {
     	polygon(x, y, sideLength, 3, color);
     }
     
-    public static void triangle(VectorI location, int sideLength, Color color) {
+    public static void triangle(Vec location, double sideLength, Color color) {
     	polygon(location, sideLength, 3, color);
     }
     
-    public static void triangle(int x, int y, int sideLength) {
+    public static void triangle(double x, double y, double sideLength) {
     	polygon(x, y, sideLength, 3);
     }
     
-    public static void triangle(VectorI location, int sideLength) {
+    public static void triangle(Vec location, double sideLength) {
     	polygon(location, sideLength, 3);
     }
     
-    public static void triangleCentered(int x, int y, int sideLength, boolean filled, Color color) {
+    public static void triangleCentered(double x, double y, double sideLength, boolean filled, Color color) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, 3, filled, color);
     }
     
-    public static void triangleCentered(VectorI location, int sideLength, boolean filled, Color color) {
-    	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3, filled, color);
+    public static void triangleCentered(Vec location, double sideLength, boolean filled, Color color) {
+    	polygon((location.x - sideLength / 2), (location.y - sideLength / 2), sideLength, 3, filled, color);
     }
     
-    public static void triangleCentered(int x, int y, int sideLength, boolean filled) {
+    public static void triangleCentered(double x, double y, double sideLength, boolean filled) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, 3, filled);
     }
     
-    public static void triangleCentered(VectorI location, int sideLength, boolean filled) {
-    	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3, filled);
+    public static void triangleCentered(Vec location, double sideLength, boolean filled) {
+    	polygon((location.x - sideLength / 2), (location.y - sideLength / 2), sideLength, 3, filled);
     }
     
-    public static void triangleCentered(int x, int y, int sideLength, Color color) {
+    public static void triangleCentered(double x, double y, double sideLength, Color color) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, 3, color);
     }
     
-    public static void triangleCentered(VectorI location, int sideLength, Color color) {
-    	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3, color);
+    public static void triangleCentered(Vec location, double sideLength, Color color) {
+    	polygon((location.x - sideLength / 2), (location.y - sideLength / 2), sideLength, 3, color);
     }
     
-    public static void triangleCentered(int x, int y, int sideLength) {
+    public static void triangleCentered(double x, double y, double sideLength) {
     	x -= sideLength / 2;
     	y -= sideLength / 2;
     	polygon(x, y, sideLength, 3);
     }
     
-    public static void triangleCentered(VectorI location, int sideLength) {
-    	polygon((int)(location.x - sideLength / 2), (int)(location.y - sideLength / 2), sideLength, 3);
+    public static void triangleCentered(Vec location, double sideLength) {
+    	polygon((location.x - sideLength / 2), (location.y - sideLength / 2), sideLength, 3);
     }
     
-    public static void line(int firstX, int firstY, int secondX, int secondY, int lineWidth, Color color) {
+    public static void line(double firstX, double firstY, double secondX, double secondY, int lineWidth, Color color) {
     	start();
     	if (color != null)
     		color(color);
-    	glLineWidth(lineWidth == 0 ? 1 : lineWidth);
+    	lineWidth(lineWidth <= 0 ? 1 : lineWidth);
     	begin(GL_LINES);
     	{
     		vertex(firstX, firstY);
@@ -514,32 +538,32 @@ public class Render {
     	stop();
     }
     
-    public static void line(VectorI firstLocation, VectorI secondLocation, int lineWidth, Color color) {
-    	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, lineWidth, color);
+    public static void line(Vec firstLocation, Vec secondLocation, int lineWidth, Color color) {
+    	line(firstLocation.x, firstLocation.y, secondLocation.x, secondLocation.y, lineWidth, color);
     }
     
-    public static void line(int firstX, int firstY, int secondX, int secondY, int lineWidth) {
+    public static void line(double firstX, double firstY, double secondX, double secondY, int lineWidth) {
     	line(firstX, firstY, secondX, secondY, lineWidth, null);
     }
     
-    public static void line(VectorI firstLocation, VectorI secondLocation, int lineWidth) {
-    	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, lineWidth, null);
+    public static void line(Vec firstLocation, Vec secondLocation, int lineWidth) {
+    	line(firstLocation.x, firstLocation.y, secondLocation.x, secondLocation.y, lineWidth, null);
     }
     
-    public static void line(int firstX, int firstY, int secondX, int secondY, Color color) {
+    public static void line(double firstX, double firstY, double secondX, double secondY, Color color) {
     	line(firstX, firstY, secondX, secondY, 0, color);
     }
     
-    public static void line(VectorI firstLocation, VectorI secondLocation, Color color) {
-    	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, 0, color);
+    public static void line(Vec firstLocation, Vec secondLocation, Color color) {
+    	line(firstLocation.x, firstLocation.y, secondLocation.x, secondLocation.y, 0, color);
     }
     
-    public static void line(int firstX, int firstY, int secondX, int secondY) {
+    public static void line(double firstX, double firstY, double secondX, double secondY) {
     	line(firstX, firstY, secondX, secondY, 0, null);
     }
     
-    public static void line(VectorI firstLocation, VectorI secondLocation) {
-    	line((int)firstLocation.x, (int)firstLocation.y, (int)secondLocation.x, (int)secondLocation.y, 0, null);
+    public static void line(Vec firstLocation, Vec secondLocation) {
+    	line(firstLocation.x, firstLocation.y, secondLocation.x, secondLocation.y, 0, null);
     }
 
 }

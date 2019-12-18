@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBEasyFont;
 
-import de.iotacb.cloud.utilities.math.vector.VectorI;
+import de.iotacb.cloud.utilities.math.Vec;
 
 public class Text {
 	
@@ -26,7 +26,7 @@ public class Text {
 		this.textSize = textSize;
 	}
 	
-	public void drawText(int x, int y, String text, Color color) {
+	public void drawText(double x, double y, String text, Color color) {
 		if (color == null) {
 			color = Color.white;
 		}
@@ -50,15 +50,15 @@ public class Text {
 		Render.stop();
 	}
 	
-	public void drawText(int x, int y, String text) {
+	public void drawText(double x, double y, String text) {
 		drawText(x, y, text, null);
 	}
 	
-	public void drawText(VectorI location, String text, Color color) {
+	public void drawText(Vec location, String text, Color color) {
 		drawText(location.x, location.y, text, color);
 	}
 	
-	public void drawText(VectorI location, String text) {
+	public void drawText(Vec location, String text) {
 		drawText(location, text, null);
 	}
 	
