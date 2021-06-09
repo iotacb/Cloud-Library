@@ -2,74 +2,48 @@ package de.iotacb.cloud.core.gui;
 
 import java.awt.Color;
 
-import de.iotacb.cloud.core.entity.Entity;
 import de.iotacb.cloud.core.window.Window;
-import de.iotacb.cloud.utilities.color.Colors;
-import de.iotacb.cloud.utilities.math.Vec;
 import de.iotacb.cloud.utilities.render.Render;
-import de.iotacb.cloud.utilities.render.Text;
+import de.iotacb.cloud.utilities.render.font.FontManager;
 
-public abstract class Button extends Entity {
+public class Button extends GuiComponent {
 
-	public Vec size;
-
-	String title;
-
-	boolean hovered;
-
-	Text btnTitle;
-
-	public Button(Window window, String title) {
-		super(window);
+	private boolean isLeftButtonDown, isHovered;
+	
+	private Color color, hoveredColor;
+	
+	private String title;
+	
+	public Button(Window window, float x, float y, float width, float height, String title) {
+		super(window, x, y, width, height);
 		this.title = title;
-		this.size = new Vec(200, 40);
+		this.color = new Color(255, 255, 255, 200);
+		this.hoveredColor = new Color(255, 255, 255, 10);
 	}
-
-	public Button(Window window, String title, Vec size) {
-		super(window);
-		this.size = size;
-		this.title = title;
-	}
-
-	public Button(Window window, String title, Vec size, Vec location) {
-		super(window);
-		this.size = size;
-		this.title = title;
-		this.location = location;
-	}
-
-	@Override
-	public void initialize() {
-		this.btnTitle = new Text(10);
-
-		this.size = new Vec(200, 40);
-	}
-
+	
 	@Override
 	public void update() {
-		this.hovered = window.getMouseLocation().x > location.x - size.x / 2
-				&& window.getMouseLocation().x < location.x + size.x / 2 && window.getMouseLocation().y > location.y - size.y / 2
-				&& window.getMouseLocation().y < location.y + size.y / 2;
-		if (window.getInput().getMouseButtonDown(0) && hovered) {
+		super.update();
+		isHovered = isHovered();
+		if (isHovered) {
+			if (window.getInput().getMouseButtonDown(0) && !isLeftButtonDown) {
+				isLeftButtonDown = true;
 				click();
+			}
+		}
+		
+		if (!window.getInput().getMouseButton(0) && isLeftButtonDown) {
+			isLeftButtonDown = false;
 		}
 	}
-
+	
 	@Override
 	public void draw() {
-		Render.rectCentered(location, size,
-				Colors.setAlpha(Color.white, hovered ? 120 : window.getInput().getMouseButton(0) && hovered ? 200 : 100));
-		btnTitle.drawText(location.x - btnTitle.getHWidth(title), location.y - 5, title);
+		super.draw();
+		Render.rect(getLocation(), getSize(), isHovered ? hoveredColor : color);
+		FontManager.instance.getNormalFont().drawCenteredStringWithShadow(title, (int)getX() + getWidth() / 2, (int)getY() + getHeight() / 2, Color.white);
 	}
-
-	public abstract void click();
-
-	public String getTitle() {
-		return title;
-	}
-
-	public boolean isHovered() {
-		return hovered;
-	}
+	
+	public void click() {}
 
 }

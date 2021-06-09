@@ -2,9 +2,9 @@ package de.iotacb.cloud.utilities.math;
 
 public class Vec {
 
-	public double x, y, z;
+	public float x, y, z;
 	
-	void init(double x, double y, double z) {
+	void init(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -13,15 +13,15 @@ public class Vec {
 	public Vec() {
 	}
 
-	public Vec(double x) {
+	public Vec(float x) {
 		init(x, 0, 0);
 	}
 
-	public Vec(double x, double y) {
+	public Vec(float x, float y) {
 		init(x, y, 0);
 	}
 	
-	public Vec(double x, double y, double z) {
+	public Vec(float x, float y, float z) {
 		init(x, y, z);
 	}
 	
@@ -30,55 +30,55 @@ public class Vec {
 	}
 	
 	public static Vec random() {
-		double rand_number = Math.random() * Maths.TAU;
-		return new Vec(Math.cos(rand_number), Math.sin(rand_number));
+		float rand_number = (float) (Math.random() * Maths.TAU);
+		return new Vec((float)Math.cos(rand_number), (float)Math.sin(rand_number));
 	}
 	
-	public static Vec random(double xMin, double xMax) {
-		double x = Randoms.randomDouble(xMin, xMax);
+	public static Vec random(float xMin, float xMax) {
+		float x = Randoms.randomFloat(xMin, xMax);
 		return new Vec(x, 0);
 	}
 	
-	public static Vec random(double xMin, double xMax, double yMin, double yMax) {
-		double x = Randoms.randomDouble(xMin, xMax);
-		double y = Randoms.randomDouble(yMin, yMax);
+	public static Vec random(float xMin, float xMax, float yMin, float yMax) {
+		float x = Randoms.randomFloat(xMin, xMax);
+		float y = Randoms.randomFloat(yMin, yMax);
 		return new Vec(x, y);
 	}
 	
-	public static Vec random(double xMin, double xMax, double yMin, double yMax, double zMin, double zMax) {
-		double x = Randoms.randomDouble(xMin, xMax);
-		double y = Randoms.randomDouble(yMin, yMax);
-		double z = Randoms.randomDouble(zMin, zMax);
+	public static Vec random(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax) {
+		float x = Randoms.randomFloat(xMin, xMax);
+		float y = Randoms.randomFloat(yMin, yMax);
+		float z = Randoms.randomFloat(zMin, zMax);
 		return new Vec(x, y, z);
 	}
 	
-	public Vec randomize(double xMin, double xMax) {
+	public Vec randomize(float xMin, float xMax) {
 		set(Vec.random(xMin, xMax));
 		return this;
 	}
 	
-	public Vec randomize(double xMin, double xMax, double yMin, double yMax) {
+	public Vec randomize(float xMin, float xMax, float yMin, float yMax) {
 		set(Vec.random(xMin, xMax, yMin, yMax));
 		return this;
 	}
 	
-	public Vec randomize(double xMin, double xMax, double yMin, double yMax, double zMin, double zMax) {
+	public Vec randomize(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax) {
 		set(Vec.random(xMin, xMax, yMin, yMax, zMin, zMax));
 		return this;
 	}
 	
-	public Vec set(double x) {
+	public Vec set(float x) {
 		this.x = x;
 		return this;
 	}
 	
-	public Vec set(double x, double y) {
+	public Vec set(float x, float y) {
 		this.x = x;
 		this.y = y;
 		return this;
 	}
 	
-	public Vec set(double x, double y, double z) {
+	public Vec set(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -92,18 +92,18 @@ public class Vec {
 		return this;
 	}
 	
-	public Vec add(double x) {
+	public Vec add(float x) {
 		this.x += x;
 		return this;
 	}
 	
-	public Vec add(double x, double y) {
+	public Vec add(float x, float y) {
 		this.x += x;
 		this.y += y;
 		return this;
 	}
 	
-	public Vec add(double x, double y, double z) {
+	public Vec add(float x, float y, float z) {
 		this.x += x;
 		this.y += y;
 		this.z += z;
@@ -117,18 +117,18 @@ public class Vec {
 		return this;
 	}
 	
-	public Vec sub(double x) {
+	public Vec sub(float x) {
 		this.x -= x;
 		return this;
 	}
 	
-	public Vec sub(double x, double y) {
+	public Vec sub(float x, float y) {
 		this.x -= x;
 		this.y -= y;
 		return this;
 	}
 	
-	public Vec sub(double x, double y, double z) {
+	public Vec sub(float x, float y, float z) {
 		this.x -= x;
 		this.y -= y;
 		this.z -= z;
@@ -142,18 +142,18 @@ public class Vec {
 		return this;
 	}
 	
-	public Vec mul(double x) {
+	public Vec mul(float x) {
 		this.x *= x;
 		return this;
 	}
 	
-	public Vec mul(double x, double y) {
+	public Vec mul(float x, float y) {
 		this.x *= x;
 		this.y *= y;
 		return this;
 	}
 	
-	public Vec mul(double x, double y, double z) {
+	public Vec mul(float x, float y, float z) {
 		this.x *= x;
 		this.y *= y;
 		this.z *= z;
@@ -167,18 +167,18 @@ public class Vec {
 		return this;
 	}
 	
-	public Vec div(double x) {
+	public Vec div(float x) {
 		this.x /= x;
 		return this;
 	}
 	
-	public Vec div(double x, double y) {
+	public Vec div(float x, float y) {
 		this.x /= x;
 		this.y /= y;
 		return this;
 	}
 	
-	public Vec div(double x, double y, double z) {
+	public Vec div(float x, float y, float z) {
 		this.x /= x;
 		this.y /= y;
 		this.z /= z;
@@ -192,30 +192,30 @@ public class Vec {
 		return this;
 	}
 	
-	public double dot(double x) {
+	public float dot(float x) {
 		return this.x * x;
 	}
 	
-	public double dot(double x, double y) {
+	public float dot(float x, float y) {
 		return this.x * x + this.y * y;
 	}
 	
-	public double dot(double x, double y, double z) {
+	public float dot(float x, float y, float z) {
 		return this.x * x + this.y * y + this.z * z;
 	}
 	
-	public double dot(Vec vec) {
+	public float dot(Vec vec) {
 		return dot(vec.x, vec.y, vec.z);
 	}
 	
-	public double cross(double x, double y) {
+	public float cross(float x, float y) {
 		return this.x * y - this.y * x;
 	}
 	
-	public Vec cross(double x, double y, double z) {
-		double xCross = this.y * z - this.z * y;
-		double yCross = this.z * x - this.x * z;
-		double zCross = this.x * y - this.y * x;
+	public Vec cross(float x, float y, float z) {
+		float xCross = this.y * z - this.z * y;
+		float yCross = this.z * x - this.x * z;
+		float zCross = this.x * y - this.y * x;
 		return new Vec(xCross, yCross, zCross);
 	}
 	
@@ -223,22 +223,22 @@ public class Vec {
 		return cross(vec.x, vec.y, vec.z);
 	}
 	
-	public Vec fromAngle(double angle) {
-		double x = Math.cos(angle);
-		double y = Math.sin(angle);
-		double z = Math.tan(angle);
+	public Vec fromAngle(float angle) {
+		float x = (float)Math.cos(angle);
+		float y = (float)Math.sin(angle);
+		float z = (float)Math.tan(angle);
 		return new Vec(x, y, z);
 	}
 	
 	public Vec normalize() {
-		double magnitude = getMagnitude();
+		float magnitude = getMagnitude();
 		if (magnitude != 0 && magnitude != 1) {
 			div(magnitude, magnitude, magnitude);
 		}
 		return this;
 	}
 	
-	public Vec limit(double limit) {
+	public Vec limit(float limit) {
 		if (getMagnitude() > limit * limit) {
 			normalize();
 			mul(limit, limit, limit);
@@ -246,32 +246,32 @@ public class Vec {
 		return this;
 	}
 	
-	public double getMagnitude() {
-		return Math.sqrt(x * x + y * y + z * z);
+	public float getMagnitude() {
+		return (float)Math.sqrt(x * x + y * y + z * z);
 	}
 	
-	public double getMagnitudeSq() {
+	public float getMagnitudeSq() {
 		return x * x + y * y + z * z;
 	}
 	
-	public Vec setMagnitude(double magnitude) {
+	public Vec setMagnitude(float magnitude) {
 		normalize();
 		mul(magnitude, magnitude, magnitude);
 		return this;
 	}
 	
-	public Vec clamp(double xMin, double xMax) {
+	public Vec clamp(float xMin, float xMax) {
 		this.x = (x < xMin ? xMin : x > xMax ? xMax : x);
 		return this;
 	}
 	
-	public Vec clamp(double xMin, double xMax, double yMin, double yMax) {
+	public Vec clamp(float xMin, float xMax, float yMin, float yMax) {
 		this.x = (x < xMin ? xMin : x > xMax ? xMax : x);
 		this.y = (y < yMin ? yMin : y > yMax ? yMax : y);
 		return this;
 	}
 	
-	public Vec clamp(double xMin, double xMax, double yMin, double yMax, double zMin, double zMax) {
+	public Vec clamp(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax) {
 		this.x = (x < xMin ? xMin : x > xMax ? xMax : x);
 		this.y = (y < yMin ? yMin : y > yMax ? yMax : y);
 		this.z = (z < zMin ? zMin : z > zMax ? zMax : z);
@@ -313,41 +313,41 @@ public class Vec {
 		return this;
 	}
 	
-	public double direction() {
-		return Math.atan2(y, x);
+	public float direction() {
+		return (float)Math.atan2(y, x);
 	}
 	
-	public double distance(double x) {
-		double xDiff = this.x - x;
-		return Math.sqrt(xDiff * xDiff);
+	public float distance(float x) {
+		float xDiff = this.x - x;
+		return (float)Math.sqrt(xDiff * xDiff);
 	}
 	
-	public double distance(double x, double y) {
-		double xDiff = this.x - x;
-		double yDiff = this.y - y;
-		return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+	public float distance(float x, float y) {
+		float xDiff = this.x - x;
+		float yDiff = this.y - y;
+		return (float)Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 	}
 	
-	public double distance(double x, double y, double z) {
-		double xDiff = this.x - x;
-		double yDiff = this.y - y;
-		double zDiff = this.z - z;
-		return Math.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff + zDiff);
+	public float distance(float x, float y, float z) {
+		float xDiff = this.x - x;
+		float yDiff = this.y - y;
+		float zDiff = this.z - z;
+		return (float)Math.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff + zDiff);
 	}
 	
-	public double distance(Vec vec) {
+	public float distance(Vec vec) {
 		return distance(vec.x, vec.y, vec.z);
 	}
 	
-	public boolean equal(double x) {
+	public boolean equal(float x) {
 		return this.x == x;
 	}
 	
-	public boolean equal(double x, double y) {
+	public boolean equal(float x, float y) {
 		return this.x == x && this.y == y;
 	}
 	
-	public boolean equal(double x, double y, double z) {
+	public boolean equal(float x, float y, float z) {
 		return this.x == x && this.y == y && this.z == z;
 	}
 	
@@ -355,16 +355,28 @@ public class Vec {
 		return equal(vec.x, vec.y, vec.z);
 	}
 	
-	public double getX() {
+	public float getX() {
 		return this.x;
 	}
 	
-	public double getY() {
+	public float getY() {
 		return this.y;
 	}
 	
-	public double getZ() {
+	public float getZ() {
 		return this.z;
+	}
+	
+	public int getXI() {
+		return (int)this.x;
+	}
+	
+	public int getYI() {
+		return (int)this.y;
+	}
+	
+	public int getZI() {
+		return (int)this.z;
 	}
 	
 	@Override

@@ -11,19 +11,19 @@ public class ImageParser {
     public ByteBuffer image;
     public int width, height;
 
-    public ImageParser(int width, int height, ByteBuffer image) {
+    public ImageParser(final int width, final int height, final ByteBuffer image) {
         this.image = image;
         this.height = height;
         this.width = width;
     }
     
-    public static ImageParser loadImage(String path) {
+    public static final ImageParser loadImage(final String path) {
         ByteBuffer image;
         int width, height;
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer comp = stack.mallocInt(1);
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
+            final IntBuffer comp = stack.mallocInt(1);
+            final IntBuffer w = stack.mallocInt(1);
+            final IntBuffer h = stack.mallocInt(1);
 
             image = STBImage.stbi_load(path, w, h, comp, 4);
             width = w.get();

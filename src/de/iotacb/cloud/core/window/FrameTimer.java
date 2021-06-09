@@ -4,37 +4,37 @@ import org.lwjgl.glfw.GLFW;
 
 public class FrameTimer {
 	
-	double lastLoopTime;
+	private double lastLoopTime;
 	
-	float timeCount;
+	private float timeCount;
 	
-	int fps, fpsCount, ups, upsCount;
+	private int fps, fpsCount, ups, upsCount;
 	
 	public FrameTimer() {
 		lastLoopTime = getTime();
 	}
 	
-	public double getTime() {
+	public final double getTime() {
 		return GLFW.glfwGetTime();
 	}
 	
-	public float getDelta() {
-		double time = getTime();
-		float delta = (float) (time - lastLoopTime);
+	public final float getDelta() {
+		final double time = getTime();
+		final float delta = (float) (time - lastLoopTime);
 		lastLoopTime = time;
 		timeCount += delta;
 		return delta;
 	}
 	
-	public void updateFPS() {
+	public final void updateFPS() {
 		fpsCount++;
 	}
 	
-	public void updateUPS() {
+	public final void updateUPS() {
 		upsCount++;
 	}
 
-	public void updateCounters() {
+	public final void updateCounters() {
 		if (timeCount > 1f) {
 			fps = fpsCount;
 			fpsCount = 0;
@@ -46,15 +46,15 @@ public class FrameTimer {
 		}
 	}
 	
-	public int getFPS() {
+	public final int getFPS() {
 		return fps > 0 ? fps : fpsCount;
 	}
 	
-	public int getUPS() {
+	public final int getUPS() {
 		return ups > 0 ? ups : upsCount;
 	}
 	
-	public double getLastLoopTime() {
+	public final double getLastLoopTime() {
 		return lastLoopTime;
 	}
 	

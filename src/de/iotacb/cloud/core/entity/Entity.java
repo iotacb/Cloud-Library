@@ -14,34 +14,34 @@ public abstract class Entity {
 	
 	public Window window;
 	
-	private void createEntity(Window window, long entityId, double x, double y) {
+	private void createEntity(final Window window, final long entityId, final float x, final float y) {
 		this.window = window;
 		this.entityId = (entityId <= -1 ? Randoms.randomLong(Long.MAX_VALUE) : entityId);
 		this.location = new Vec(x, y);
 		initialize();
 	}
 	
-	public Entity(Window window) {
+	public Entity(final Window window) {
 		createEntity(window, -1, 0, 0);
 	}
 	
-	public Entity(Window window, long entityId) {
+	public Entity(final Window window, final long entityId) {
 		createEntity(window, entityId, 0, 0);
 	}
 	
-	public Entity(Window window, double x, double y) {
+	public Entity(final Window window, final float x, final float y) {
 		createEntity(window, -1, x, y);
 	}
 	
-	public Entity(Window window, Vec location) {
+	public Entity(final Window window, final Vec location) {
 		createEntity(window, -1, location.x, location.y);
 	}
 	
-	public Entity(Window window, long entityId, double x, double y) {
+	public Entity(final Window window, final long entityId, final float x, final float y) {
 		createEntity(window, entityId, x, y);
 	}
 	
-	public Entity(Window window, long entityId, Vec location) {
+	public Entity(final Window window, final long entityId, final Vec location) {
 		createEntity(window, entityId, location.x, location.y);
 	}
 	
@@ -49,86 +49,88 @@ public abstract class Entity {
 	public abstract void update();
 	public abstract void draw();
 	
-	public void setLocation(double x, double y) {
+	public final void setLocation(final float x, final float y) {
 		location.set(x, y);
 	}
 	
-	public void setLocation(Vec location) {
+	public final void setLocation(final Vec location) {
 		this.location.set(location);
 	}
 	
-	public void moveTo(double direction, double speed, int key) {
+	public final void moveTo(final float direction, final float speed, final int key) {
 		if (window.getInput().getKey(key) || key == -1) {
 			this.location.x += Maths.lengthDirX(speed, direction);
 			this.location.y += Maths.lengthDirY(speed, direction);
 		}
 	}
 	
-	public void moveAway(double direction, double speed, int key) {
+	public final void moveAway(final float direction, final float speed, final int key) {
 		if (window.getInput().getKey(key) || key == -1) {
 			this.location.x -= Maths.lengthDirX(speed, direction);
 			this.location.y -= Maths.lengthDirY(speed, direction);
 		}
 	}
 	
-	public void moveToLocation(double locationX, double locationY, double speed, double threshold, int key) {
-		double direction = Maths.direction(location.x, location.y, locationX, locationY) - 90;
+	public final void moveToLocation(final float locationX, final float locationY, final float speed, final float threshold, final int key) {
+		final float direction = Maths.direction(location.x, location.y, locationX, locationY) - 90;
 		if (Maths.dist(location.x, location.y, locationX, locationY) >= threshold) moveTo(direction, speed, key);
 	}
 	
-	public void moveToLocation(Vec location, double speed, double threshold, int key) {
+	public void moveToLocation(final Vec location, final float speed, final float threshold, final int key) {
 		moveToLocation(location.x, location.y, speed, threshold, key);
 	}
 	
-	public void leaveLocation(double locationX, double locationY, double speed, double threshold, int key) {
-		double direction = Maths.direction(location.x, location.y, locationX, locationY);
+	public final void leaveLocation(final float locationX, final float locationY, final float speed, final float threshold, final int key) {
+		final float direction = Maths.direction(location.x, location.y, locationX, locationY);
 		if (Maths.dist(location.x, location.y, locationX, locationY) > threshold) moveAway(direction, speed, key);
 	}
 	
-	public void leaveLocation(Vec location, double speed, double threshold, int key) {
+	public final void leaveLocation(final Vec location, final float speed, final float threshold, final int key) {
 		leaveLocation(location.x, location.y, speed, threshold, key);
 	}
 	
-	public void moveWithKeys(int keyLeft, int keyRight, int keyUp, int keyDown, double speed) {
-		int moveX = this.window.getInput().getKey(keyLeft) ? -1 : this.window.getInput().getKey(keyRight) ? 1 : 0;
-		int moveY = this.window.getInput().getKey(keyUp) ? -1 : this.window.getInput().getKey(keyDown) ? 1 : 0;
+	public final void moveWithKeys(final int keyLeft, final int keyRight, final int keyUp, final int keyDown, final float speed) {
+		final int moveX = this.window.getInput().getKey(keyLeft) ? -1 : this.window.getInput().getKey(keyRight) ? 1 : 0;
+		final int moveY = this.window.getInput().getKey(keyUp) ? -1 : this.window.getInput().getKey(keyDown) ? 1 : 0;
 		
-		Vec input = new Vec(moveX, moveY);
-		Vec direction = input.normalize();
-		Vec velocity = direction.mul(speed, speed, speed);
-		Vec moveAmount = velocity.clone();
+		final Vec input = new Vec(moveX, moveY);
+		final Vec direction = input.normalize();
+		final Vec velocity = direction.mul(speed, speed, speed);
 		
-		this.location.add(moveAmount);
+		this.location.add(velocity);
 	}
 	
-	public void moveWASD(double speed) {
+	public final void moveWASD(final float speed) {
 		moveWithKeys(Keys.KEY_A, Keys.KEY_D, Keys.KEY_W, Keys.KEY_S, speed);
 	}
 	
-	public void moveArrows(double speed) {
+	public final void moveArrows(final float speed) {
 		moveWithKeys(Keys.KEY_LEFT, Keys.KEY_RIGHT, Keys.KEY_UP, Keys.KEY_DOWN, speed);
 	}
 	
-    public void moveWithGamepad(double speed, double threshold, int moveStick) {
-    	double stickX = moveStick == 0 ? window.getInput().getLeftJoystickX() : window.getInput().getRightJoystickX();
-    	double stickY = moveStick == 0 ? window.getInput().getLeftJoystickY() : window.getInput().getRightJoystickY();
+    public final void moveWithGamepad(final float speed, final float threshold, final int moveStick) {
+    	float stickX = moveStick == 0 ? window.getInput().getLeftJoystickX() : window.getInput().getRightJoystickX();
+    	float stickY = moveStick == 0 ? window.getInput().getLeftJoystickY() : window.getInput().getRightJoystickY();
     	
     	stickX = Math.abs(stickX) > threshold ? stickX : 0;
     	stickY = Math.abs(stickY) > threshold ? stickY : 0;
     	
-    	Vec input = new Vec(stickX, stickY);
-    	Vec velocity = input.mul(speed, speed, speed);
-    	Vec moveAmount = velocity.clone();
+    	final Vec input = new Vec(stickX, stickY);
+    	final Vec velocity = input.mul(speed, speed, speed);
 		
-		this.location.add(moveAmount);
+		this.location.add(velocity);
     }
     
-    public double getX() {
+    public final float getX() {
 		return location.x;
 	}
     
-    public double getY() {
+    public final float getY() {
 		return location.y;
+	}
+    
+    public final Vec getLocation() {
+		return location;
 	}
     
 }

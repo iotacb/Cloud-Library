@@ -1,100 +1,59 @@
 package de.iotacb.cloud.core.window;
 
-import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
-import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
-import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
-import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
-import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
-import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
-import static org.lwjgl.glfw.GLFW.glfwInit;
-import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowIcon;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowOpacity;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
-import static org.lwjgl.glfw.GLFW.glfwShowWindow;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.system.MemoryUtil.NULL;
-
 import java.nio.DoubleBuffer;
-import java.nio.file.Paths;
+import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-
+import de.iotacb.cloud.core.scene.Scene;
 import de.iotacb.cloud.core.window.icon.ImageParser;
-import de.iotacb.cloud.core.world.World;
 import de.iotacb.cloud.utilities.input.Input;
 import de.iotacb.cloud.utilities.math.Vec;
 import de.iotacb.cloud.utilities.render.Render;
+import de.iotacb.cloud.utilities.render.font.FontManager;
 
 public class Window {
 
-	float deltaTime;
+	private float deltaTime;
 
-	int fpsCap, framebufferWidth, framebufferHeight, sampling;
-	GLFWFramebufferSizeCallback framebufferSizeCallback;
+	private int fpsCap, sampling;
+	private GLFWFramebufferSizeCallback framebufferSizeCallback;
 
-	GpioController gpioController;
- 
-	Input inputHandler;
+	private Input inputHandler;
 
-	int mouseX, mouseY, lastMouseX, lastMouseY;
+	private FrameTimer timer;
+	private GLFWWindowFocusCallback windowFocusCallback;
 
-	FrameTimer timer;
-	GLFWWindowFocusCallback windowFocusCallback;
+	private long windowId, mainMonitor;
 
-	long windowId, mainMonitor;
+	private boolean windowResizable, windowFullscreen, windowFocused, vsync;
 
-	boolean windowResizable, windowFullscreen, windowFocused, vsync;
+	private Vec windowSize, mouseLocation, lastMouseLocation;
 
-	Vec windowSize, mouseLocation, lastMouseLocation;
+	private GLFWWindowSizeCallback windowSizeCallback;
 
-	GLFWWindowSizeCallback windowSizeCallback;
+	private String windowTitle;
+	private double windowWidth, windowHeight;
+	private Scene scene, prevScene;
 
-	String windowTitle;
-	double windowWidth, windowHeight;
-	World world, prevWorld;
-
-	public Window(int width, int height, String title) {
+	public Window(final int width, final int height, final String title) {
 		createWindow(width, height, title, false, false);
 	}
 
-	public Window(int width, int height, String title, boolean fullscreen, boolean resizable) {
+	public Window(final int width, final int height, final String title, final boolean fullscreen, final boolean resizable) {
 		createWindow(width, height, title, fullscreen, resizable);
 	}
 
-	private void createWindow(double windowWidth, double windowHeight, String windowTitle, boolean fullscreen,
-			boolean resizable) {
+	private void createWindow(final int windowWidth, final int windowHeight, final String windowTitle, final boolean fullscreen, final boolean resizable) {
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
 		this.windowTitle = windowTitle;
@@ -103,7 +62,7 @@ public class Window {
 		this.mouseLocation = new Vec();
 		this.lastMouseLocation = new Vec();
 
-		this.world = new World(this) {
+		this.scene = new Scene(this) {
 			@Override
 			public void draw() {
 				drawEntities();
@@ -127,80 +86,71 @@ public class Window {
 	}
 
 	private void initialize() throws Exception {
-		if (!glfwInit())
-
+		if (!GLFW.glfwInit()) return;
 		setWindowHints();
 		makeWindow();
 		setGLFW();
 		inputHandler = new Input(this.windowId, this, System.getProperty("os.name").contains("Windows"));
 		timer = new FrameTimer();
 		Render.window = this;
+		FontManager.instance = new FontManager();
 	}
 
-	public void initGpio() {
-		if (!System.getProperty("os.name").contains("Windows"))
-			this.gpioController = GpioFactory.getInstance();
-	}
-
-	public void destroy() {
+	public final void destroy() {
 		framebufferSizeCallback.free();
 		windowSizeCallback.free();
 		windowFocusCallback.free();
-		glfwTerminate();
-		glfwDestroyWindow(windowId);
+		GLFW.glfwTerminate();
+		GLFW.glfwDestroyWindow(windowId);
 	}
 
 	private void drawScreen() throws Exception {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glViewport(0, 0, (int) windowWidth, (int) windowHeight);
-		glOrtho(0, windowWidth, windowHeight, 0, -1, 1);
-		glMatrixMode(GL_MODELVIEW);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glViewport(0, 0, (int) windowWidth, (int) windowHeight);
+		GL11.glOrtho(0, windowWidth, windowHeight, 0, -1, 1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
-		glClear(GL_COLOR_BUFFER_BIT);
-		world.draw();
-		glfwSwapBuffers(this.windowId);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		scene.draw();
+		GLFW.glfwSwapBuffers(this.windowId);
 
 		deltaTime = timer.getDelta();
 		timer.updateFPS();
 	}
 
 	private void makeWindow() throws Exception {
-		mainMonitor = glfwGetPrimaryMonitor();
-		GLFWVidMode videoMode = glfwGetVideoMode(mainMonitor);
+		mainMonitor = GLFW.glfwGetPrimaryMonitor();
+		final GLFWVidMode videoMode = GLFW.glfwGetVideoMode(mainMonitor);
 
 		if (windowFullscreen) {
 			this.windowWidth = videoMode.width();
 			this.windowHeight = videoMode.height();
-			this.framebufferWidth = videoMode.width();
-			this.framebufferHeight = videoMode.height();
+			videoMode.width();
+			videoMode.height();
 			this.windowSize.set(videoMode.width(), videoMode.height());
 		}
 
-		windowId = glfwCreateWindow((int) this.windowWidth, (int) this.windowHeight, this.windowTitle,
-				(this.windowFullscreen ? mainMonitor : 0), 0);
-		if (windowId == 0 || windowId == NULL) {
-			glfwTerminate();
+		windowId = GLFW.glfwCreateWindow((int) this.windowWidth, (int) this.windowHeight, this.windowTitle, (this.windowFullscreen ? mainMonitor : 0), 0);
+		if (windowId == 0 || windowId == MemoryUtil.NULL) {
+			GLFW.glfwTerminate();
 		}
 
-		glfwSetWindowPos(windowId, (int) (videoMode.width() - windowWidth) / 2,
-				(int) (videoMode.height() - windowHeight) / 2);
+		GLFW.glfwSetWindowPos(windowId, (int) (videoMode.width() - windowWidth) / 2, (int) (videoMode.height() - windowHeight) / 2);
 
 		setCallbacks();
 	}
 
 	private void setCallbacks() {
-		glfwSetFramebufferSizeCallback(windowId, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
+		GLFW.glfwSetFramebufferSizeCallback(windowId, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
 			@Override
 			public void invoke(long windowId, int width, int height) {
 				if (width > 0 && height > 0) {
-					framebufferWidth = width;
-					framebufferHeight = height;
 				}
 			}
 		});
 
-		glfwSetWindowSizeCallback(windowId, windowSizeCallback = new GLFWWindowSizeCallback() {
+		GLFW.glfwSetWindowSizeCallback(windowId, windowSizeCallback = new GLFWWindowSizeCallback() {
 			@Override
 			public void invoke(long windowId, int width, int height) {
 				if (width > 0 && height > 0) {
@@ -211,7 +161,7 @@ public class Window {
 			}
 		});
 
-		glfwSetWindowFocusCallback(windowId, windowFocusCallback = new GLFWWindowFocusCallback() {
+		GLFW.glfwSetWindowFocusCallback(windowId, windowFocusCallback = new GLFWWindowFocusCallback() {
 
 			@Override
 			public void invoke(long windowId, boolean focused) {
@@ -221,82 +171,83 @@ public class Window {
 	}
 
 	private void setGLFW() {
-		glfwMakeContextCurrent(windowId);
-		glfwSwapInterval(vsync ? 1 : 0);
-		glfwShowWindow(windowId);
+		GLFW.glfwMakeContextCurrent(windowId);
+		GLFW.glfwSwapInterval(vsync ? 1 : 0);
+		GLFW.glfwShowWindow(windowId);
 		GL.createCapabilities();
 	}
 
 	private void setWindowHints() {
-		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, (this.windowResizable ? GLFW_TRUE : GLFW_FALSE));
+		GLFW.glfwDefaultWindowHints();
+		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, (this.windowResizable ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE));
 		if (sampling > 0) {
-			glfwWindowHint(GLFW_SAMPLES, sampling);
+			GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, sampling);
 		}
 	}
 
 	private void updateCursor() {
-		DoubleBuffer bufferX = BufferUtils.createDoubleBuffer(1), bufferY = BufferUtils.createDoubleBuffer(1);
-		glfwGetCursorPos(windowId, bufferX, bufferY);
+		final DoubleBuffer bufferX = BufferUtils.createDoubleBuffer(1), bufferY = BufferUtils.createDoubleBuffer(1);
+		
+		GLFW.glfwGetCursorPos(windowId, bufferX, bufferY);
+		mouseLocation.set((float)bufferX.get(), (float)bufferY.get());
 		lastMouseLocation.set(mouseLocation);
-		mouseLocation.set(bufferX.get(), bufferY.get());
 	}
 
 	private void updateScreen() throws Exception {
-		glfwPollEvents();
+		GLFW.glfwPollEvents();
 		updateCursor();
 		timer.updateUPS();
-		world.update();
+		scene.update();
 		inputHandler.update();
 	}
 
-	public void setFPSCap(int fpsCap) {
+	public final void setFPSCap(final int fpsCap) {
 		this.fpsCap = fpsCap;
 	}
 
-	public void setIcon(String path) {
-		GLFWImage image = GLFWImage.malloc();
-		GLFWImage.Buffer imageBuffer = GLFWImage.malloc(1);
-		ImageParser parsedImage = ImageParser.loadImage(path);
+	public final void setIcon(final String path) {
+		final GLFWImage image = GLFWImage.malloc();
+		final GLFWImage.Buffer imageBuffer = GLFWImage.malloc(1);
+		final ImageParser parsedImage = ImageParser.loadImage(path);
 		image.set(parsedImage.width, parsedImage.height, parsedImage.image);
 		imageBuffer.put(0, image);
-		glfwSetWindowIcon(windowId, imageBuffer);
+		GLFW.glfwSetWindowIcon(windowId, imageBuffer);
 	}
 
-	public void setSampling(int sampling) {
+	public final void setSampling(final int sampling) {
 		this.sampling = sampling;
 	}
 
-	public void setTitle(String title) {
+	public final void setTitle(final String title) {
 		this.windowTitle = title;
-		glfwSetWindowTitle(windowId, title);
+		GLFW.glfwSetWindowTitle(windowId, title);
 	}
 
-	public void setVSync(boolean vsync) {
+	public final void setVSync(final boolean vsync) {
 		this.vsync = vsync;
-		glfwSwapInterval(vsync ? 1 : 0);
+		GLFW.glfwSwapInterval(vsync ? 1 : 0);
 	}
 
-	public void setWindowOpacity(float opacity) {
-		glfwSetWindowOpacity(windowId, opacity);
+	public final void setWindowOpacity(final float opacity) {
+		GLFW.glfwSetWindowOpacity(windowId, opacity);
 	}
 
-	public void setWorld(final Class<? extends World> world) {
+	public final void setScene(final Class<? extends Scene> scene) {
 		try {
-			this.world = world.getConstructor(getClass()).newInstance(this);
+			this.scene = scene.getConstructor(getClass()).newInstance(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		this.world.initialize();
+		this.scene.initialize();
 	}
 
-	public void setWorld(World world) {
-		this.world = world;
+	public final void setScene(final Scene scene) {
+		this.scene = scene;
 	}
 
-	public void show() throws Exception {
-		while (!glfwWindowShouldClose(windowId)) {
+	public final void show() throws Exception {
+		while (!GLFW.glfwWindowShouldClose(windowId)) {
 			Sync.sync(fpsCap);
 			updateScreen();
 			drawScreen();
@@ -305,91 +256,87 @@ public class Window {
 		destroy();
 	}
 
-	public String getWindowTitle() {
+	public final String getWindowTitle() {
 		return windowTitle;
 	}
 
-	public float getDeltaTime() {
+	public final float getDeltaTime() {
 		return deltaTime;
 	}
 
-	public int getFPS() {
+	public final int getFPS() {
 		return timer.getFPS();
 	}
 
-	public int getFpsCap() {
+	public final int getFpsCap() {
 		return fpsCap;
 	}
 
-	public GpioController getGpioController() {
-		return gpioController;
-	}
-
-	public Input getInput() {
+	public final Input getInput() {
 		return inputHandler;
 	}
 
-	public Vec getLastMouseLocation() {
+	public final Vec getLastMouseLocation() {
 		return lastMouseLocation;
 	}
 
-	public int getLastMouseX() {
-		return lastMouseX;
+	public final int getLastMouseX() {
+		return lastMouseLocation.getXI();
 	}
 
-	public int getLastMouseY() {
-		return lastMouseY;
+	public final int getLastMouseY() {
+		return lastMouseLocation.getYI();
 	}
 
-	public Vec getMouseLocation() {
+	public final Vec getMouseLocation() {
 		return mouseLocation;
 	}
 
-	public int getMouseX() {
-		return mouseX;
+	public final int getMouseX() {
+		return mouseLocation.getXI();
 	}
 
-	public int getMouseY() {
-		return mouseY;
+	public final int getMouseY() {
+		return mouseLocation.getYI();
 	}
 
-	public World getPrevWorld() {
-		return prevWorld;
+	public final Scene getPrevScene() {
+		return prevScene;
 	}
 
-	public double getWindowHeight() {
+	public final double getWindowHeight() {
 		return windowHeight;
 	}
 
-	public Vec getWindowSize() {
+	public final Vec getWindowSize() {
 		return windowSize;
 	}
 
-	public double getWindowWidth() {
+	public final double getWindowWidth() {
 		return windowWidth;
 	}
 
-	public World getWorld() {
-		return world;
+	public final Scene getScene() {
+		return scene;
 	}
 
-	public boolean isVsync() {
+	public final boolean isVsync() {
 		return vsync;
 	}
 
-	public boolean isWindowClosing() {
-		return glfwWindowShouldClose(windowId);
+	public final boolean isWindowClosing() {
+		return GLFW.glfwWindowShouldClose(windowId);
 	}
 
-	public boolean isWindowFocused() {
+	public final boolean isWindowFocused() {
 		return windowFocused;
 	}
 
-	public boolean isWindowFullscreen() {
+	public final boolean isWindowFullscreen() {
 		return windowFullscreen;
 	}
 
-	public boolean isWindowResizable() {
+	public final boolean isWindowResizable() {
 		return windowResizable;
 	}
 
